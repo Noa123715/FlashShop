@@ -9,8 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
-    "@upstash/redis": "^1.35.6",
+    "@upstash/redis": "^1.4.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0"
   }
