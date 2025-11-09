@@ -7,7 +7,7 @@ const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route index element={<Terms />} />
+                <Route index element={<About />} />
             </Routes>
         </BrowserRouter>
     )

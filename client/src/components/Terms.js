@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AdminControls from "./AdminControls";
 
 export default function TermsModal({ isAdmin }) {
     const [page, setPage] = useState({ title: "", content: "" });
@@ -85,24 +86,14 @@ export default function TermsModal({ isAdmin }) {
                 )}
                 {/* Admin Controls */}
                 {isAdmin && (
-                    <div className="mt-4">
-                        {!editMode ? (
-                            <button onClick={() => setEditMode(true)}>✏️ Edit</button>
-                        ) : (
-                            <>
-                                <button onClick={saveChanges}>💾 Save</button>
-                                <button onClick={cancelEdit} className="ml-2">
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => setPreviewMode(!previewMode)}
-                                    className="ml-2"
-                                >
-                                    👁 {previewMode ? "Edit" : "Preview"}
-                                </button>
-                            </>
-                        )}
-                    </div>
+                    <AdminControls
+                        editMode={editMode}
+                        setEditMode={setEditMode}
+                        saveChanges={saveChanges}
+                        cancelEdit={cancelEdit}
+                        previewMode={previewMode}
+                        setPreviewMode={setPreviewMode}
+                    />
                 )}
             </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AdminControls from "./AdminControls";
 
 export default function Footer({ isAdmin }) {
     const [page, setPage] = useState({ title: "", content: "" });
@@ -125,27 +126,16 @@ export default function Footer({ isAdmin }) {
                     </>
                 )}
             </div>
-
             {/* Admin Controls */}
             {isAdmin && (
-                <div style={{ marginTop: "20px" }}>
-                    {!editMode ? (
-                        <button onClick={() => setEditMode(true)}>✏️ Edit</button>
-                    ) : (
-                        <>
-                            <button onClick={saveChanges}>💾 Save</button>
-                            <button onClick={cancelEdit} style={{ marginLeft: "10px" }}>
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => setPreviewMode(!previewMode)}
-                                style={{ marginLeft: "10px" }}
-                            >
-                                👁 {previewMode ? "Edit" : "Preview"}
-                            </button>
-                        </>
-                    )}
-                </div>
+                <AdminControls
+                    editMode={editMode}
+                    setEditMode={setEditMode}
+                    saveChanges={saveChanges}
+                    cancelEdit={cancelEdit}
+                    previewMode={previewMode}
+                    setPreviewMode={setPreviewMode}
+                />
             )}
         </div>
     );
