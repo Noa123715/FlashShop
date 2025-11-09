@@ -2,17 +2,18 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import AdminControls from "./AdminControls";
 
-export default function AboutPage({ isAdmin }) {
+export default function AboutPage() {
     const [page, setPage] = useState({ title: "", content: "" });
     const [editMode, setEditMode] = useState(false);
     const [previewMode, setPreviewMode] = useState(false);
     const [draft, setDraft] = useState({ title: "", content: "" });
+    // Check admin status from localStorage - need to fix that
+    const isAdmin = localStorage.getItem("admin");
 
     useEffect(() => {
         axios.get("http://localhost:4000/api/page/about").then((res) => {
             setPage(res.data);
             setDraft(res.data);
-            console.log(res.data);
         });
     }, []);
 
@@ -29,6 +30,7 @@ export default function AboutPage({ isAdmin }) {
         setPreviewMode(false);
     };
 
+    console.log("isAdmin:", isAdmin);
     return (
         <div style={{ padding: "20px", maxWidth: 800, margin: "auto" }}>
             {/* Content */}
