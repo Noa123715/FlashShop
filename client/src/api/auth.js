@@ -1,0 +1,28 @@
+//auth api 
+import axios from "axios";
+const API_URL = 'http://localhost:3000/auth';
+export const signUp = async (name, email, password) => {
+    const response = await axios.post(`${API_URL}/signup`, {
+        name,
+        email,
+        password
+    });
+    return response;
+};
+export const signIn = async (email, password) => {
+    const response = await axios.post(`${API_URL}/login`, {
+        email,
+        password
+    });
+    return response;
+};
+export const signOut = async () => {
+    const response = await axios.post(`${API_URL}/logout`);
+    return response;
+};
+export const forgotPasswordRequest = async (email) => {
+    const response = await axios.post(`${API_URL}/requestPasswordReset`, {
+        email
+    });
+    return response;
+}
