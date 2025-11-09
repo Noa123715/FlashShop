@@ -1,15 +1,14 @@
 import './App.css';
-import AppRoutes from './AppRoutes.js';
-import Header from './components/Header.js';
-import Footer from './components/Footer.js';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 
 function App() {
   return (
-    <>
-      {/* <Header /> */}
-      <AppRoutes />
-      {/* <Footer /> */}
-    </>
+    <div className="App">
+     <LoginPage />
+     <SignUpPage />
+   
+    </div>
   );
 }
 
