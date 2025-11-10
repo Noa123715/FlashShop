@@ -2,6 +2,7 @@ import AdminControls from '../components/AdminControls.js';
 import { useAdminControl } from '../hooks/useAdminControl.js';
 import { useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
     // Check admin status from localStorage - need to fix that
@@ -16,6 +17,7 @@ export default function HomePage() {
         goToTips: ""
     }, "home");
     const { draft, updateDraft, editMode, previewMode } = adminControls;
+    const Navigate = useNavigate();
 
     useEffect(() => {
         axios.get("http://localhost:4000/api/page/home").then((res) => {
@@ -143,7 +145,7 @@ export default function HomePage() {
             <br />
             <button className='see-more-button'>{draft.goToAll}</button>
             <br />
-            <button>{draft.goToAbout}</button>
+            <button onClick={(e) => Navigate('/about')}>{draft.goToAbout}</button>
             <p>{draft.textAbout}</p>
             <p>כאן הלקוחות המרוצים שלנו יספרו לכם על החוייה אצלנו
                 כמה כיף לקנות כאן ואיזה שירות פצצה יש לנו
@@ -151,7 +153,7 @@ export default function HomePage() {
                 לקוח מרוצה . עד הגג
 
                 . . .</p>
-            <button className='tips'>{draft.goToTips}</button>
+            <button onClick={(e) => Navigate('/tips')}>{draft.goToTips}</button>
         </div>
     );
 
