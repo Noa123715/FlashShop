@@ -4,6 +4,7 @@ import About from './components/About.js'
 import Terms from './components/Terms.js'
 import LoginPage from './pages/LoginPage.js'
 import SignUpPage from './pages/SignUpPage.js'
+import HomePage from './pages/HomePage.js'
 
 const AppRoutes = () => {
     return (
@@ -14,6 +15,7 @@ const AppRoutes = () => {
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/home" element={<HomePage />} />
             </Routes>
         </BrowserRouter>
     )

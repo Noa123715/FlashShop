@@ -1,19 +1,45 @@
 import React from 'react';
 
-const AdminControls = ({ editMode, setEditMode, saveChanges, cancelEdit, previewMode, setPreviewMode }) => {
+const AdminControls = ({ 
+    isAdmin,
+    editMode, 
+    children,
+    previewContent,
+    adminControls,
+}) => {
+    if (!isAdmin) return children;
+
     return (
-        <div className="mt-4">
-            {!editMode ? (
-                <button onClick={() => setEditMode(true)}>✏️ Edit</button>
+        <div>
+            {editMode ? (
+                // Show preview content or edit content based on preview mode
+                adminControls.previewMode ? children : previewContent
             ) : (
-                <>
-                    <button onClick={saveChanges}>💾 Save</button>
-                    <button onClick={cancelEdit} className="ml-2">Cancel</button>
-                    <button onClick={() => setPreviewMode(!previewMode)} className="ml-2">
-                        👁 {previewMode ? "Edit" : "Preview"}
-                    </button>
-                </>
+                children
             )}
+            
+            <div className="mt-4">
+                {!editMode ? (
+                    <button onClick={() => adminControls.setEditMode(true)}>
+                        ✏️ Edit
+                    </button>
+                ) : (
+                    <>
+                        <button onClick={adminControls.saveChanges}>
+                            💾 Save
+                        </button>
+                        <button onClick={adminControls.cancelEdit} className="ml-2">
+                            ❌ Cancel
+                        </button>
+                        <button 
+                            onClick={() => adminControls.setPreviewMode(!adminControls.previewMode)} 
+                            className="ml-2"
+                        >
+                            👁 {adminControls.previewMode ? "Edit" : "Preview"}
+                        </button>
+                    </>
+                )}
+            </div>
         </div>
     );
 };
