@@ -1,0 +1,54 @@
+import { useEffect } from "react";
+import axios from "axios";
+import AdminControls from "./AdminControls";
+import { useAdminControl } from "../hooks/useAdminControl";
+
+export default function Header() {
+    const isAdmin = localStorage.getItem("admin");
+    const adminControls = useAdminControl({ logo: "" }, "header");
+    const { draft, updateDraft, editMode } = adminControls;
+
+    useEffect(() => {
+        axios.get("http://localhost:4000/api/page/header").then((res) => {
+            adminControls.setPage(res.data);
+            adminControls.setDraft(res.data);
+        });
+    }, []);
+
+    const EditContent = (
+        <>
+            <label>🔗 Logo URL:</label>
+            <input
+                type="text"
+                value={draft.logo}
+                onChange={(e) => updateDraft({ logo: e.target.value })}
+                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+            />
+        </>
+    );
+
+    const ViewContent = (
+        <div className="preview-content">
+            <img 
+                src={draft.logo} 
+                alt="Flash Logo" 
+                style={{ maxWidth: "100%", marginBottom: "10px" }} 
+            />
+        </div>
+    );
+
+    return (
+        <div style={{ padding: "20px", maxWidth: 800, margin: "auto" }}>
+            {isAdmin && (
+                <AdminControls
+                    isAdmin={isAdmin}
+                    editMode={editMode}
+                    previewContent={EditContent}
+                    adminControls={adminControls}
+                >
+                    {ViewContent}
+                </AdminControls>
+            )}
+        </div>
+    );
+}
