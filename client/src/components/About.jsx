@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import axios from "axios";
-import AdminControls from "./AdminControls";
-import { useAdminControl } from "../hooks/useAdminControl";
+import AdminControls from "./AdminControls.jsx";
+import { useAdminControl } from "../hooks/useAdminControl.jsx";
 
 export default function AboutPage() {
     // Check admin status from localStorage - need to fix that

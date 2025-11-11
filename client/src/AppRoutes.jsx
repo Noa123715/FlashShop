@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import About from './components/About.js'
-import Terms from './components/Terms.js'
-import LoginPage from './pages/LoginPage.js'
-import SignUpPage from './pages/SignUpPage.js'
-import HomePage from './pages/HomePage.js'
+import About from './components/About.jsx'
+import Terms from './components/Terms.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import SignUpPage from './pages/SignUpPage.jsx'
+import HomePage from './pages/HomePage.jsx'
 
 const AppRoutes = () => {
     return (

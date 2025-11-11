@@ -1,5 +1,5 @@
-import AdminControls from '../components/AdminControls.js';
-import { useAdminControl } from '../hooks/useAdminControl.js';
+import AdminControls from '../components/AdminControls.jsx';
+import { useAdminControl } from '../hooks/useAdminControl.jsx';
 import { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
@@ -143,6 +143,7 @@ export default function HomePage() {
                 </div>
             )}
             <br />
+            
             <button className='see-more-button'>{draft.goToAll}</button>
             <br />
             <button onClick={(e) => Navigate('/about')}>{draft.goToAbout}</button>
