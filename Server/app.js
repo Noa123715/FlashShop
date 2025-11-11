@@ -3,7 +3,7 @@ const cors = require("cors");
 const config_routes = require("./routes/config_routes");
 require("./db/mongoConnection");
 const {config}= require("./config/secret")
-const PORT = config.PORT || 3000;
+const PORT = config.PORT || 5000;
 const HOST_NAME = config.HOST_NAME || '127.0.0.1';
 const app = express();
 

@@ -1,14 +1,14 @@
-import logo from './logo.svg';
 import './App.css';
-import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
+import Nav from './components/nav';
+import ShoppingCartPage from './pages/ShoppingCartPage';
+import Footer from './components/footer';
 
 function App() {
   return (
     <div className="App">
-     <LoginPage />
-     <SignUpPage />
-   
+      <Nav/>
+      <ShoppingCartPage />
+      <Footer />
     </div>
   );
 }
