@@ -7,7 +7,9 @@ import {
     getFooterPage,
     updateFooterPage,
     getTermsPage,
-    updateTermsPage
+    updateTermsPage,
+    getHomePage,
+    updateHomePage,
 } from "../controllers/pageController.js";
 
 const router = express.Router();
@@ -15,6 +17,10 @@ const router = express.Router();
 // Headers Page Routes
 router.get("/header", getHeaderPage);
 router.put("/header", updateHeaderPage);
+
+// Home Page Routes
+router.get("/home", getHomePage);
+router.put("/home", updateHomePage);
 
 // About Page Routes
 router.get("/about", getAboutPage);

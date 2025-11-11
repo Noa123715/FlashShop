@@ -1,129 +1,56 @@
 import redis from "../config/redis.js";
 
-// Get Header Page Data
-export const getHeaderPage = async (req, res) => {
-    try {
-        const header = await redis.hgetall("header");
-        res.json(header);
-    } catch (err) {
-        console.error("getHeaderPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
+// Generic factory for GET handler
+const createGetHandler = (key) => {
+    return async (req, res) => {
+        try {
+            const data = await redis.hgetall(key);
+            res.json(data);
+        } catch (err) {
+            console.error(`get ${key} page error:`, err);
+            res.status(500).json({ error: err.message });
+        }
+    };
 };
 
-// Update Header Page Data
-export const updateHeaderPage = async (req, res) => {
-    try {
-        const data = req.body;
-        const existingKeys = await redis.hkeys("header");
-        const fieldsToUpdate = {};
-        for (const key of existingKeys) {
-            if (data.hasOwnProperty(key)) {
-                fieldsToUpdate[key] = data[key];
+// Generic factory for UPDATE handler
+const createUpdateHandler = (key) => {
+    return async (req, res) => {
+        try {
+            const data = req.body || {};
+            const existingKeys = await redis.hkeys(key);
+            const fieldsToUpdate = {};
+
+            for (const k of existingKeys) {
+                if (Object.prototype.hasOwnProperty.call(data, k)) {
+                    fieldsToUpdate[k] = data[k];
+                }
             }
-        }
-        if (Object.keys(fieldsToUpdate).length > 0) {
-            await redis.hset("header", fieldsToUpdate);
-        }
-        res.json({ success: true, updatedFields: Object.keys(fieldsToUpdate) });
-    } catch (err) {
-        console.error("updateHeaderPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
 
-// Get About Page Data
-export const getAboutPage = async (req, res) => {
-    try {
-        const about = await redis.hgetall("about");
-        res.json(about);
-    } catch (err) {
-        console.error("getAboutPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
-
-// Update About Page Data
-export const updateAboutPage = async (req, res) => {
-    try {
-        const data = req.body;
-        const existingKeys = await redis.hkeys("about");
-        const fieldsToUpdate = {};
-        for (const key of existingKeys) {
-            if (data.hasOwnProperty(key)) {
-                fieldsToUpdate[key] = data[key];
+            if (Object.keys(fieldsToUpdate).length > 0) {
+                await redis.hset(key, fieldsToUpdate);
             }
+
+            res.json({ success: true, updatedFields: Object.keys(fieldsToUpdate) });
+        } catch (err) {
+            console.error(`update ${key} page error:`, err);
+            res.status(500).json({ error: err.message });
         }
-        if (Object.keys(fieldsToUpdate).length > 0) {
-            await redis.hset("about", fieldsToUpdate);
-        }
-        res.json({ success: true, updatedFields: Object.keys(fieldsToUpdate) });
-    } catch (err) {
-        console.error("updateAboutPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
+    };
 };
 
-// Get Terms Page Data
-export const getTermsPage = async (req, res) => {
-    try {
-        const footer = await redis.hgetall("terms");
-        res.json(footer);
-    } catch (err) {
-        console.error("getTermsPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
+// Exports using factories — שמות פונקציות לא השתנו
+export const getHeaderPage = createGetHandler("header");
+export const updateHeaderPage = createUpdateHandler("header");
 
-// Update Terms Page Data
-export const updateTermsPage = async (req, res) => {
-    try {
-        const data = req.body;
-        const existingKeys = await redis.hkeys("terms");
-        const fieldsToUpdate = {};
-        for (const key of existingKeys) {
-            if (data.hasOwnProperty(key)) {
-                fieldsToUpdate[key] = data[key];
-            }
-        }
-        if (Object.keys(fieldsToUpdate).length > 0) {
-            await redis.hset("terms", fieldsToUpdate);
-        }
-        res.json({ success: true, updatedFields: Object.keys(fieldsToUpdate) });
-    } catch (err) {
-        console.error("updateTermsPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
+export const getHomePage = createGetHandler("home");
+export const updateHomePage = createUpdateHandler("home");
 
-// Get Footer Page Data
-export const getFooterPage = async (req, res) => {
-    try {
-        const footer = await redis.hgetall("footer");
-        res.json(footer);
-    } catch (err) {
-        console.error("getFooterPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
+export const getAboutPage = createGetHandler("about");
+export const updateAboutPage = createUpdateHandler("about");
 
-// Update Footer Page Data
-export const updateFooterPage = async (req, res) => {
-    try {
-        const data = req.body;
-        const existingKeys = await redis.hkeys("footer");
-        const fieldsToUpdate = {};
-        for (const key of existingKeys) {
-            if (data.hasOwnProperty(key)) {
-                fieldsToUpdate[key] = data[key];
-            }
-        }
-        if (Object.keys(fieldsToUpdate).length > 0) {
-            await redis.hset("footer", fieldsToUpdate);
-        }
-        res.json({ success: true, updatedFields: Object.keys(fieldsToUpdate) });
-    } catch (err) {
-        console.error("updateFooterPage error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
+export const getTermsPage = createGetHandler("terms");
+export const updateTermsPage = createUpdateHandler("terms");
+
+export const getFooterPage = createGetHandler("footer");
+export const updateFooterPage = createUpdateHandler("footer");
