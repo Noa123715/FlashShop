@@ -55,7 +55,7 @@
 /* Make navbar take remaining space and render items in one row */
 .App header > div .flex-1 {
   flex: 1 1 auto !important;
-  min-width: 0; /* prevents overflow */
+  min-width: 0;
 }
 
 /* Ensure header image container stays compact (do not fill whole row) */
@@ -84,7 +84,7 @@ nav ul {
   padding: 0 !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  direction: rtl; /* keep RTL */
+  direction: rtl;
 }
 
 /* Ensure each li does not force vertical stacking */
@@ -128,7 +128,7 @@ nav ul li::before {
 /* Top area: put header image on the RIGHT and navbar on the LEFT */
 .App header > div {
   display: flex !important;
-  flex-direction: row !important; /* was row-reverse */
+  flex-direction: row !important;
   align-items: center !important;
   justify-content: space-between !important;
   gap: 1rem;
@@ -139,7 +139,7 @@ nav ul li::before {
 /* Make navbar take remaining space and render items in one row */
 .App header > div .flex-1 {
   flex: 1 1 auto !important;
-  min-width: 0; /* prevents overflow */
+  min-width: 0;
 }
 
 /* Reduce header image container to a slightly larger fixed size */
@@ -181,8 +181,8 @@ nav ul {
   margin: 0 !important;
   padding: 0 !important;
   align-items: center !important;
-  justify-content: flex-start !important; /* ensure left alignment */
-  direction: ltr !important; /* force links to flow left-to-right block so they sit on the left side */
+  justify-content: flex-start !important;
+  direction: ltr !important;
 }
 
 /* Ensure each li does not force vertical stacking */
@@ -206,10 +206,10 @@ nav ul li::before {
 nav ul li a,
 .App header nav ul li a {
   position: relative;
-  text-decoration: none !important; /* remove default underline */
+  text-decoration: none !important;
   -webkit-text-decoration: none !important;
   color: #f2665e;
-  padding: 0.25rem 0.5rem; /* space for background */
+  padding: 0.25rem 0.5rem;
   border-radius: 8px;
   transition: color .18s ease, transform .12s ease;
   will-change: transform;
@@ -226,7 +226,7 @@ nav ul li a::before,
   transform-origin: left;
   transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .18s ease;
   border-radius: inherit;
-  z-index: -1; /* behind text */
+  z-index: -1;
   opacity: 0;
 }
 
@@ -252,7 +252,7 @@ nav ul li a:hover,
 .App header nav ul li a:hover {
   color: #c84a41;
   transform: translateY(-2px);
-  text-decoration: none !important; /* reinforce removal */
+  text-decoration: none !important;
 }
 
 /* animate background and underline on hover */
