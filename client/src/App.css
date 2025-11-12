@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -11,9 +15,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +28,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -42,7 +49,7 @@
 }
 
 /* Force top area to be row-reverse so Header (image) is on the right */
-.App header > div {
+.App header>div {
   display: flex !important;
   flex-direction: row-reverse !important;
   align-items: center !important;
@@ -53,15 +60,15 @@
 }
 
 /* Make navbar take remaining space and render items in one row */
-.App header > div .flex-1 {
+.App header>div .flex-1 {
   flex: 1 1 auto !important;
   min-width: 0;
 }
 
 /* Ensure header image container stays compact (do not fill whole row) */
-.App header > div > div.w-40,
-.App header > div > div.w-56,
-.App header > div > div.w-72 {
+.App header>div>div.w-40,
+.App header>div>div.w-56,
+.App header>div>div.w-72 {
   flex: 0 0 auto !important;
 }
 
@@ -106,27 +113,33 @@ nav ul li::before {
 
 /* small screens: allow shrink */
 @media (max-width: 640px) {
-  .App header > div {
+  .App header>div {
     flex-direction: column-reverse !important;
     align-items: stretch !important;
     gap: 0.5rem;
   }
-  .App header > div .flex-1 {
+
+  .App header>div .flex-1 {
     order: 2;
   }
-  .App header > div > div.w-40,
-  .App header > div > div.w-56,
-  .App header > div > div.w-72 {
+
+  .App header>div>div.w-40,
+  .App header>div>div.w-56,
+  .App header>div>div.w-72 {
     order: 1;
     width: 100% !important;
     display: flex;
     justify-content: center;
   }
-  nav ul { justify-content: center !important; gap: 16px !important; }
+
+  nav ul {
+    justify-content: center !important;
+    gap: 16px !important;
+  }
 }
 
 /* Top area: put header image on the RIGHT and navbar on the LEFT */
-.App header > div {
+.App header>div {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
@@ -137,15 +150,15 @@ nav ul li::before {
 }
 
 /* Make navbar take remaining space and render items in one row */
-.App header > div .flex-1 {
+.App header>div .flex-1 {
   flex: 1 1 auto !important;
   min-width: 0;
 }
 
 /* Reduce header image container to a slightly larger fixed size */
-.App header > div > div.w-40,
-.App header > div > div.w-56,
-.App header > div > div.w-72 {
+.App header>div>div.w-40,
+.App header>div>div.w-56,
+.App header>div>div.w-72 {
   flex: 0 0 140px !important;
   max-width: 140px !important;
 }
@@ -160,12 +173,14 @@ nav ul li::before {
 
 /* a bit larger on medium+ screens */
 @media (min-width: 768px) {
-  .App header > div > div.w-40,
-  .App header > div > div.w-56,
-  .App header > div > div.w-72 {
+
+  .App header>div>div.w-40,
+  .App header>div>div.w-56,
+  .App header>div>div.w-72 {
     flex: 0 0 160px !important;
     max-width: 160px !important;
   }
+
   .App header img {
     width: 160px !important;
   }
@@ -221,10 +236,10 @@ nav ul li a::before,
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(242,102,94,0.08), rgba(245,158,158,0.06));
+  background: linear-gradient(90deg, rgba(242, 102, 94, 0.08), rgba(245, 158, 158, 0.06));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .18s ease;
+  transition: transform .28s cubic-bezier(.2, .8, .2, 1), opacity .18s ease;
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
@@ -242,7 +257,7 @@ nav ul li a::after,
   background: linear-gradient(90deg, #f2665e, #f59e9e);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  transition: transform .28s cubic-bezier(.2, .8, .2, 1);
   border-radius: 2px;
   z-index: 0;
 }
@@ -271,5 +286,25 @@ nav ul li a:hover::after,
 nav ul li a:focus-visible,
 .App header nav ul li a:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(242,102,94,0.12);
+  box-shadow: 0 0 0 3px rgba(242, 102, 94, 0.12);
+}
+
+.hero-section img {
+  border-bottom: 8px solid #f2665e;
+}
+
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Ensure full width for sections */
+.home-content, .about-section, footer {
+    width: 100%;
+}
+
+/* Add some spacing for mobile */
+@media (max-width: 640px) {
+    .about-section {
+        padding: 20px;
+    }
 }
