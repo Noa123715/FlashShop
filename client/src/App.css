@@ -40,3 +40,236 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Force top area to be row-reverse so Header (image) is on the right */
+.App header > div {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Make navbar take remaining space and render items in one row */
+.App header > div .flex-1 {
+  flex: 1 1 auto !important;
+  min-width: 0; /* prevents overflow */
+}
+
+/* Ensure header image container stays compact (do not fill whole row) */
+.App header > div > div.w-40,
+.App header > div > div.w-56,
+.App header > div > div.w-72 {
+  flex: 0 0 auto !important;
+}
+
+/* Make header image scale nicely */
+.App header img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Force NavBar ul to be horizontal and remove bullets (override other global rules) */
+.App header nav ul,
+nav ul {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 32px !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  direction: rtl; /* keep RTL */
+}
+
+/* Ensure each li does not force vertical stacking */
+.App header nav ul li,
+nav ul li {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block;
+  white-space: nowrap;
+}
+
+/* If some global CSS still sets list-style via pseudo-element, hide it */
+.App header nav ul li::marker,
+nav ul li::marker,
+.App header nav ul li::before,
+nav ul li::before {
+  content: none !important;
+}
+
+/* small screens: allow shrink */
+@media (max-width: 640px) {
+  .App header > div {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+    gap: 0.5rem;
+  }
+  .App header > div .flex-1 {
+    order: 2;
+  }
+  .App header > div > div.w-40,
+  .App header > div > div.w-56,
+  .App header > div > div.w-72 {
+    order: 1;
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+  }
+  nav ul { justify-content: center !important; gap: 16px !important; }
+}
+
+/* Top area: put header image on the RIGHT and navbar on the LEFT */
+.App header > div {
+  display: flex !important;
+  flex-direction: row !important; /* was row-reverse */
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Make navbar take remaining space and render items in one row */
+.App header > div .flex-1 {
+  flex: 1 1 auto !important;
+  min-width: 0; /* prevents overflow */
+}
+
+/* Reduce header image container to a slightly larger fixed size */
+.App header > div > div.w-40,
+.App header > div > div.w-56,
+.App header > div > div.w-72 {
+  flex: 0 0 140px !important;
+  max-width: 140px !important;
+}
+
+/* Make header image slightly larger and contained */
+.App header img {
+  display: block;
+  width: 140px !important;
+  height: auto;
+  object-fit: contain;
+}
+
+/* a bit larger on medium+ screens */
+@media (min-width: 768px) {
+  .App header > div > div.w-40,
+  .App header > div > div.w-56,
+  .App header > div > div.w-72 {
+    flex: 0 0 160px !important;
+    max-width: 160px !important;
+  }
+  .App header img {
+    width: 160px !important;
+  }
+}
+
+/* Force NavBar ul to be horizontal, remove bullets and align LEFT */
+.App header nav ul,
+nav ul {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 32px !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  align-items: center !important;
+  justify-content: flex-start !important; /* ensure left alignment */
+  direction: ltr !important; /* force links to flow left-to-right block so they sit on the left side */
+}
+
+/* Ensure each li does not force vertical stacking */
+.App header nav ul li,
+nav ul li {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block;
+  white-space: nowrap;
+}
+
+/* If some global CSS still sets list-style via pseudo-element, hide it */
+.App header nav ul li::marker,
+nav ul li::marker,
+.App header nav ul li::before,
+nav ul li::before {
+  content: none !important;
+}
+
+/* Override default underline and add animated background + underline */
+nav ul li a,
+.App header nav ul li a {
+  position: relative;
+  text-decoration: none !important; /* remove default underline */
+  -webkit-text-decoration: none !important;
+  color: #f2665e;
+  padding: 0.25rem 0.5rem; /* space for background */
+  border-radius: 8px;
+  transition: color .18s ease, transform .12s ease;
+  will-change: transform;
+}
+
+/* animated background that grows horizontally */
+nav ul li a::before,
+.App header nav ul li a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(242,102,94,0.08), rgba(245,158,158,0.06));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .18s ease;
+  border-radius: inherit;
+  z-index: -1; /* behind text */
+  opacity: 0;
+}
+
+/* existing animated underline (keeps current effect) */
+nav ul li a::after,
+.App header nav ul li a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: linear-gradient(90deg, #f2665e, #f59e9e);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  border-radius: 2px;
+  z-index: 0;
+}
+
+/* hover state: show background and underline, gentle lift */
+nav ul li a:hover,
+.App header nav ul li a:hover {
+  color: #c84a41;
+  transform: translateY(-2px);
+  text-decoration: none !important; /* reinforce removal */
+}
+
+/* animate background and underline on hover */
+nav ul li a:hover::before,
+.App header nav ul li a:hover::before {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+nav ul li a:hover::after,
+.App header nav ul li a:hover::after {
+  transform: scaleX(1);
+}
+
+/* נראות למשתמשים שמנווטים עם מקלדת */
+nav ul li a:focus-visible,
+.App header nav ul li a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(242,102,94,0.12);
+}

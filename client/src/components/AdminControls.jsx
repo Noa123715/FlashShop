@@ -7,12 +7,12 @@ const AdminControls = ({
     previewContent,
     adminControls,
 }) => {
-    if (!isAdmin) return children;
+    // בדיקה נכונה - האם isAdmin באמת "true" (מחרוזת) או משהו falsy
+    if (!isAdmin || isAdmin !== "true") return children;
 
     return (
         <div>
             {editMode ? (
-                // Show preview content or edit content based on preview mode
                 adminControls.previewMode ? children : previewContent
             ) : (
                 children
