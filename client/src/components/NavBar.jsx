@@ -1,111 +1,52 @@
-import React from 'react'
+import { Link } from 'react-router-dom';
+import { FaDownload } from 'react-icons/fa'
 
 export default function NavBar() {
     return (
         <nav
             className="w-full bg-white shadow-sm"
             aria-label="תפריט ראשי"
-            style={{ borderBottom: '1px solid #e5e7eb' }}
         >
-            <ul 
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: '32px',
-                    padding: '16px 32px',
-                    margin: 0,
-                    listStyle: 'none',
-                    direction: 'rtl'
-                }}
+            <ul
+                dir="rtl"
+                className="flex justify-start items-center gap-6 p-4"
             >
-                <li style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    <a href="#products" style={{
-                        color: '#f2665e',
-                        fontFamily: 'Noto Sans Hebrew, sans-serif',
-                        fontSize: '16px',
-                        fontWeight: 'normal',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        transition: 'all 0.3s ease'
-                    }} 
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
+                <li>
+                    <Link to="/home" className="hover:underline">
                         מוצרים
-                    </a>
+                    </Link>
                 </li>
-                <li style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    <a href="#photo-development" style={{
-                        color: '#f2665e',
-                        fontFamily: 'Noto Sans Hebrew, sans-serif',
-                        fontSize: '16px',
-                        fontWeight: 'normal',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
+                <li>
+                    <Link to="/home" className="hover:underline">
                         פיתוח תמונות
-                    </a>
+                    </Link>
                 </li>
-                <li style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    <a href="#blog" style={{
-                        color: '#f2665e',
-                        fontFamily: 'Noto Sans Hebrew, sans-serif',
-                        fontSize: '16px',
-                        fontWeight: 'normal',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
+                <li>
+                    <Link to="/about" className="hover:underline">
                         בלוג
-                    </a>
+                    </Link>
                 </li>
-                <li style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    <a href="#club" style={{
-                        color: '#f2665e',
-                        fontFamily: 'Noto Sans Hebrew, sans-serif',
-                        fontSize: '16px',
-                        fontWeight: 'normal',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
-                        תקנון הצטרפות למועדון
-                    </a>
+                <li>
+                    <Link to="/terms" className="hover:underline">
+                        הצטרפות למועדון
+                    </Link>
                 </li>
-                <li style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    <a href="#catalog" style={{
-                        color: '#f2665e',
-                        fontFamily: 'Noto Sans Hebrew, sans-serif',
-                        fontSize: '16px',
-                        fontWeight: 'normal',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                <li>
+                    <Link to="/tips" className="hover:underline">
+                        טיפים לצילום
+                    </Link>
+                </li>
+                <li>
+                    <a
+                        href="/My-Product-Catalog.pdf"
+                        download="Our-Catalog-2025.pdf"
+                        className="flex items-center gap-2 hover:underline"
                     >
                         קטלוג
+                        <FaDownload />
                     </a>
                 </li>
             </ul>
         </nav>
     )
 }
-

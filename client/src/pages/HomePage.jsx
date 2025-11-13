@@ -120,41 +120,47 @@ export default function HomePage() {
     );
 
     const ViewContent = (
-        <div className="preview-content">
-            <h1>{draft.title}</h1>
+        <div className="home-content text-center max-w-6xl mx-auto px-4">
             {draft.mainImg && (
-                <img
-                    src={draft.mainImg}
-                    alt="main home image"
-                    style={{ marginTop: "20px", maxWidth: "100%" }}
-                />
-            )}
-            {Array.isArray(draft.products) && draft.products.length > 0 && (
-                <div className='container'>
-                    {draft.products.map((prod, index) => (
-                        <div key={index} className='product-card'>
-                            <img
-                                src={prod.image}
-                                alt={prod.name || `Product ${index + 1}`}
-                                className='product-image'
-                            />
-                        </div>
-                    ))}
+                <div className="hero-section relative">
+                    <img
+                        src={draft.mainImg}
+                        alt="main home image"
+                        className="w-full h-auto"
+                    />
+                    <div className="hero-overlay absolute inset-0 flex items-center justify-center text-white text-3xl font-bold bg-black/30">
+                        {draft.title}
+                    </div>
                 </div>
             )}
-            <br />
-            
-            <button className='see-more-button'>{draft.goToAll}</button>
-            <br />
-            <button onClick={(e) => Navigate('/about')}>{draft.goToAbout}</button>
-            <p>{draft.textAbout}</p>
-            <p>כאן הלקוחות המרוצים שלנו יספרו לכם על החוייה אצלנו
-                כמה כיף לקנות כאן ואיזה שירות פצצה יש לנו
-
-                לקוח מרוצה . עד הגג
-
-                . . .</p>
-            <button onClick={(e) => Navigate('/tips')}>{draft.goToTips}</button>
+            <div className="about-section bg-white py-10 px-6 rounded-2xl shadow-md relative z-10">
+                <p className="text-right text-gray-700 leading-relaxed mb-6">{draft.textAbout}</p>
+                {Array.isArray(draft.products) && draft.products.length > 0 && (
+                    <div className="flex justify-center gap-4 mt-8 flex-wrap">
+                        {draft.products.map((prod, index) => (
+                            <div key={index} className='product-card'>
+                                <img
+                                    src={prod.image}
+                                    alt={prod.name || `Product ${index + 1}`}
+                                    className="w-40 h-40 object-cover rounded-xl shadow"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <div className="mt-10 flex flex-col items-center gap-4">
+                    <button className="bg-[#f2665e] text-white px-8 py-3 rounded-full hover:bg-[#e1574f] transition-colors">
+                        {draft.goToAll}
+                    </button>
+                    <button onClick={(e) => Navigate('/about')} className="bg-[#f2665e] text-white px-8 py-3 rounded-full hover:bg-[#e1574f] transition-colors">
+                        {draft.goToAbout}
+                    </button>
+                    <p>כאן הלקוחות המרוצים שלנו יספרו לכם על החוייה אצלנו כמה כיף לקנות כאן ואיזה שירות פצצה יש לנו לקוח מרוצה . עד הגג . . .</p>
+                    <button onClick={(e) => Navigate('/tips')} className="bg-[#f2665e] text-white px-8 py-3 rounded-full hover:bg-[#e1574f] transition-colors">
+                        {draft.goToTips}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 

@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import AboutPage from "./components/About";
 import TermsModal from "./components/Terms";
 import LoginPage from "./pages/LoginPage";
+import Tips from "./pages/Tips";
 
 export default function AppRoutes() {
     return (
@@ -16,6 +17,7 @@ export default function AppRoutes() {
                 <Route path="/home" element={<Layout>  <HomePage /> </Layout>} />
                 <Route path="/about" element={<Layout><AboutPage /></Layout>} />
                 <Route path="/terms" element={<Layout> <TermsModal /> </Layout>} />
+                <Route path="/tips" element={<Layout> <Tips /> </Layout>} />
 
                 {/* Redirect to home */}
                 <Route path="*" element={<Navigate to="/" />} />
