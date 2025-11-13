@@ -2,12 +2,12 @@ const router = require("express").Router();
 
 const  { login,signup,requestPasswordReset, resetPassword } =require( '../controllers/userController.js');
 
-router.post('/auth/login', login);
-router.post('auth/signup', signup);
+router.post('/login', login);
+router.post('/signup', signup);
 // Route to request password reset
-router.post('/auth/requestPasswordReset', requestPasswordReset);
+router.post('/requestPasswordReset', requestPasswordReset);
 
 // Route to reset password
-router.post('auth/resetPassword', resetPassword);
+router.post('/resetPassword', resetPassword);
 
 module.exports = router;

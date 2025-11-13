@@ -2,44 +2,51 @@ const nodemailer = require("nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs");
 const path = require("path");
+const { config } = require("../config/secret");
 
 exports.sendEmail = async (email, subject, payload, template) => {
   try {
     console.log("inside send email");
-    const transporter = nodemailer.createTransport({
-      service: 'gmail', 
-      auth: {
-        user: process.env.USER,
-        pass: process.env.PASS,
-      },
-    });
-    console.log(email)
-    const source = fs.readFileSync(path.join(__dirname, template), "utf8");
-    console.log(source)
-    const compiledTemplate = handlebars.compile(source);
-    const options = () => {
-      return {
-        from: process.env.USER,
-        to: email,
-        subject: subject,
-        html: compiledTemplate(payload),
-      };
-    };
 
-    // Send mail 
-    console.log("came to send mail")
-    transporter.sendMail(options(), (error, info) => {
-      if (error) {
-        return error;
-      } else {
-        return res.status(200).json({
-          success: true,
-        });
+
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: config.USER,
+        pass: config.PASS, // App password
+      },
+      tls: {
+        rejectUnauthorized: false // Only for development
       }
     });
-  } catch (error) {
-    return error;
-  }
 
+    console.log('sending to:', email);
+
+    const templatePath = path.resolve(__dirname, template);
+    if (!fs.existsSync(templatePath)) {
+      throw new Error(`Email template not found: ${templatePath}`);
+    }
+
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const compiledTemplate = handlebars.compile(source);
+
+    const mailOptions = {
+      from: process.env.USER,
+      to: email,
+      subject,
+      html: compiledTemplate(payload),
+    };
+
+    // sendMail returns a promise in modern nodemailer versions
+    const info = await transporter.sendMail(mailOptions);
+    console.log('email sent:', info && info.messageId);
+    return { success: true, info };
+  } catch (error) {
+    console.error('sendEmail error:', error);
+    // rethrow so callers can handle the error and respond appropriately
+    throw error;
+  }
 };
 

@@ -3,6 +3,9 @@ import axios from "axios";
 import AdminControls from "./AdminControls";
 import { useAdminControl } from "../hooks/useAdminControl";
 
+
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from "react-icons/fa";
+
 export default function Footer() {
     const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl(
@@ -36,6 +39,18 @@ export default function Footer() {
         console.log("Contact form submitted:", contactForm);
     };
 
+    // helper to format phone for tel: link (remove spaces and non-digit except leading +)
+    const formatPhoneForLink = (phone) => {
+        if (!phone) return "";
+        // keep plus and digits only
+        return phone.replace(/[^+\d]/g, "");
+    };
+
+    const formatEmailForLink = (email) => {
+        if (!email) return "";
+        return encodeURIComponent(email);
+    };
+
     useEffect(() => {
         axios.get("http://localhost:4000/api/page/footer").then((res) => {
             adminControls.setPage(res.data);
@@ -44,6 +59,7 @@ export default function Footer() {
     }, []);
 
     const EditContent = (
+       
         <>
             <div className="sendANote">
                 <input
@@ -166,22 +182,26 @@ export default function Footer() {
                     </p>
                     <p className="text-sm mt-6 text-center opacity-90">{draft.creditNote}</p>
                 </div>
+
             </div>
         </footer>
     );
 
+
     return (
-        <div style={{ padding: "20px", maxWidth: 800, margin: "auto" }}>
-            {isAdmin && (
+        <>
+            {isAdmin ? (
                 <AdminControls
                     isAdmin={isAdmin}
                     editMode={editMode}
                     previewContent={EditContent}
                     adminControls={adminControls}
                 >
-                    {ViewContent}
+                    {ViewContent} 
                 </AdminControls>
+            ) : (
+                ViewContent
             )}
-        </div>
+        </>
     );
 }
