@@ -17,22 +17,22 @@ export default function Header() {
 
     const EditContent = (
         <>
-            <label>🔗 Logo URL:</label>
+            <label className="block mb-2 font-semibold">🔗 Logo URL:</label>
             <input
                 type="text"
                 value={draft.logo}
                 onChange={(e) => updateDraft({ logo: e.target.value })}
-                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+                className="w-full p-2 border border-gray-300 rounded"
             />
         </>
     );
 
     const ViewContent = (
         <div className="preview-content">
-            <img 
-                src={draft.logo} 
-                alt="Flash Logo" 
-                style={{ maxWidth: "100%", marginBottom: "10px" }} 
+            <img
+                src={draft.logo}
+                alt="Flash Logo"
+                style={{ maxWidth: "100%", marginBottom: "10px" }}
             />
         </div>
     );

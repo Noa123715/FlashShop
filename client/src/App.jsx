@@ -3,10 +3,11 @@ import './App.css'
 import ShoppingCartPage from './pages/ShoppingCartPage.jsx'
 
 function App() {
-
   return (
     <>
-<ShoppingCartPage />
+      <div className="App">
+        <AppRoutes />
+      </div>
     </>
   )
 }

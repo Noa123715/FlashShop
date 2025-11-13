@@ -1,24 +1,25 @@
-import React, { useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import About from './components/About.jsx'
-import Terms from './components/Terms.jsx'
-import LoginPage from './pages/LoginPage.jsx'
-import SignUpPage from './pages/SignUpPage.jsx'
-import HomePage from './pages/HomePage.jsx'
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./components/Layout";
+import HomePage from "./pages/HomePage";
+import AboutPage from "./components/About";
+import TermsModal from "./components/Terms";
+import LoginPage from "./pages/LoginPage";
 
-const AppRoutes = () => {
+export default function AppRoutes() {
     return (
-        <BrowserRouter>
+        <Router>
             <Routes>
-                <Route path="/about" element={<About />} />
-                <Route path="/about/*" element={<About />} />
-                <Route path="/terms" element={<Terms />} />
+                {/* Login route - without Layout */}
                 <Route path="/" element={<LoginPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
-                <Route path="/home" element={<HomePage />} />
-            </Routes>
-        </BrowserRouter>
-    )
-}
 
-export default AppRoutes
+                {/* All other routes - with Layout */}
+                <Route path="/home" element={<Layout>  <HomePage /> </Layout>} />
+                <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+                <Route path="/terms" element={<Layout> <TermsModal /> </Layout>} />
+
+                {/* Redirect to home */}
+                <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+        </Router>
+    );
+}

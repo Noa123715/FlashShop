@@ -4,7 +4,6 @@ import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 
 export default function AboutPage() {
-    // Check admin status from localStorage - need to fix that
     const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl({ content: "", image1: "" }, "about");
     const { draft, updateDraft, editMode, previewMode } = adminControls;
@@ -17,29 +16,28 @@ export default function AboutPage() {
     }, []);
 
     const EditContent = (
-        <>
+        <div className="p-8 bg-white">
             <textarea
-                style={{ width: "100%", height: "250px" }}
+                className="w-full h-64 p-4 border border-gray-300 rounded mb-4"
                 value={draft.content}
                 onChange={(e) => updateDraft({ content: e.target.value })}
             />
-            <label>🔗 Main Image URL:</label>
+            <label className="block mb-2 font-semibold">🔗 Main Image URL:</label>
             <input
+                className="w-full p-2 border border-gray-300 rounded"
                 type="text"
                 value={draft.image1}
                 onChange={(e) => updateDraft({ image1: e.target.value })}
-                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
             />
-        </>
+        </div>
     );
 
     const ViewContent = (
-        <div className="preview-content">
-            <p style={{ whiteSpace: "pre-line" }}>{draft.content}</p>
+        <div className="w-full">
+            <p>{draft.content}</p>
             <img
                 src={draft.image1}
                 alt="Flash main"
-                style={{ marginTop: "20px", maxWidth: "100%" }}
             />
         </div>
     );
