@@ -34,7 +34,7 @@ export default function LoginPage() {
     signIn(email, password)
       .then((response) => {
         // Save admin status in localStorage - need to fix that
-        localStorage.setItem('admin', true);
+        localStorage.setItem('admin', false);
         Navigate('/about');
       })
       .catch((error) => {

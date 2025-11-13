@@ -1,5 +1,3 @@
-import React from 'react';
-
 const AdminControls = ({ 
     isAdmin,
     editMode, 
@@ -7,7 +5,6 @@ const AdminControls = ({
     previewContent,
     adminControls,
 }) => {
-    // בדיקה נכונה - האם isAdmin באמת "true" (מחרוזת) או משהו falsy
     if (!isAdmin || isAdmin !== "true") return children;
 
     return (

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { FaDownload } from 'react-icons/fa'
 
 export default function NavBar() {
     return (
@@ -6,46 +7,44 @@ export default function NavBar() {
             className="w-full bg-white shadow-sm"
             aria-label="תפריט ראשי"
         >
-            <ul>
+            <ul
+                dir="rtl"
+                className="flex justify-start items-center gap-6 p-4"
+            >
                 <li>
-                    <Link to="/home"
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
+                    <Link to="/home" className="hover:underline">
                         מוצרים
                     </Link>
                 </li>
                 <li>
-                    <Link to="/home"
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
+                    <Link to="/home" className="hover:underline">
                         פיתוח תמונות
                     </Link>
                 </li>
                 <li>
-                    <Link to="/about"
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
+                    <Link to="/about" className="hover:underline">
                         בלוג
                     </Link>
                 </li>
                 <li>
-                    <Link to="/terms"
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
-                         הצטרפות למועדון
+                    <Link to="/terms" className="hover:underline">
+                        הצטרפות למועדון
                     </Link>
                 </li>
                 <li>
-                    <Link to="/tips"
-                    onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                    >
+                    <Link to="/tips" className="hover:underline">
                         טיפים לצילום
                     </Link>
+                </li>
+                <li>
+                    <a
+                        href="/My-Product-Catalog.pdf"
+                        download="Our-Catalog-2025.pdf"
+                        className="flex items-center gap-2 hover:underline"
+                    >
+                        קטלוג
+                        <FaDownload />
+                    </a>
                 </li>
             </ul>
         </nav>
