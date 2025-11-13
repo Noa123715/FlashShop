@@ -73,7 +73,7 @@ exports.requestPasswordReset = async (req,res,next) => {
 
   const link = `${clientURL}/Auth/passwordReset?token=${resetToken}&id=${user._id}`;
 console.log(link)
-  sendEmail(
+  await sendEmail(
     user.email,
     "Password Reset Request",
     {
@@ -83,8 +83,10 @@ console.log(link)
     "./template/requestResetPassword.handlebars"
   );
   console.log("email sent")
+  res.status(200).json({ msg: "Password reset email sent" });
   } catch (error) {   
     console.log(error);
+    res.status(500).json({ msg: "Error sending password reset email", error: error.message });
   }
 };
 
@@ -107,13 +109,13 @@ exports.resetPassword = async (user_Id, token, password) => {
 
   const hash = await bcrypt.hash(password, Number(bcryptSalt));
 
-  await User.updateOne(
+  await   UserModel.updateOne(
     { _id: user_Id },
     { $set: { password: hash } },
     { new: true }
   );
 
-  const user = await findByID(User, { _id: user_Id });
+  const user = await UserModel.findById(user_Id);
 
   sendEmail(
     user.email,
