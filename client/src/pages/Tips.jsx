@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
+import { getAllTips } from '../api/auth';
 import AdminControls from "../components/AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 
@@ -14,10 +15,11 @@ export default function Tips() {
             adminControls.setDraft(res.data);
         });
 
-        // axios.get("http://localhost:4000/api/page/tips").then((res) => {
-        //     adminControls.setPage(res.data);
-        //     adminControls.setDraft(res.data);
-        // });
+        getAllTips().then((response) => {
+            console.log("Tips data:", response.data);
+        }).catch((error) => {
+            console.error("Error fetching tips:", error);
+        });
     }, []);
 
     const EditContent = (
