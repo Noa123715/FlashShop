@@ -29,14 +29,52 @@ export default function Footer() {
         email: "",
         message: "",
     });
-
+    const [sending, setSending] = useState(false);
+    const [statusMsg, setStatusMsg] = useState(null);
     const handleContactFormChange = (field, value) => {
         setContactForm((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleSubmit = (e) => {
+    // inside Footer.jsx component (replace the current handleSubmit)
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Contact form submitted:", contactForm);
+
+        // basic validation
+        if (!contactForm.name?.trim() || !contactForm.email?.trim() || !contactForm.message?.trim()) {
+            setStatusMsg({ type: 'error', text: 'מלא/י שם, אימייל והודעה.' });
+            return;
+        }
+        // basic email regex
+        const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRe.test(contactForm.email)) {
+            setStatusMsg({ type: 'error', text: 'כתובת אימייל לא תקינה.' });
+            return;
+        }
+
+        try {
+            setSending(true);
+            setStatusMsg(null);
+
+            // בצע POST לשרת - החלף את הכתובת בהתאם לאן תרצי לשלוח
+            // אפשר לבחור: http://localhost:5000/contact או http://localhost:4000/api/contact
+            const res = await axios.post('http://localhost:5000/contact', contactForm, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (res.status === 200 || res.status === 201) {
+                setStatusMsg({ type: 'success', text: 'ההודעה נשלחה בהצלחה. תודה!' });
+                setContactForm({ name: '', email: '', message: '' }); // נקה טופס
+            } else {
+                setStatusMsg({ type: 'error', text: 'אירעה שגיאה בשליחת ההודעה. נסה/י שנית.' });
+            }
+        } catch (err) {
+            console.error('contact send error', err);
+            setStatusMsg({ type: 'error', text: 'שגיאה ברשת או בשרת. נא לנסות שוב מאוחר יותר.' });
+        } finally {
+            setSending(false);
+        }
     };
 
     // helper to format phone for tel: link (remove spaces and non-digit except leading +)
@@ -59,7 +97,7 @@ export default function Footer() {
     }, []);
 
     const EditContent = (
-       
+
         <>
             <div className="sendANote">
                 <input
@@ -133,14 +171,14 @@ export default function Footer() {
 
     const ViewContent = (
         <footer className="w-full bg-[#f2665e] py-12 px-4 sm:px-8 text-white">
-       
+
             <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4 lg:px-8 items-start" dir="rtl">
-                
+
                 <div className="sendANote pr-0 md:pr-8">
                     <h2 dir="rtl" className="text-xl font-semibold mb-4 text-right" style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}>
                         {draft.noteTitle}
                     </h2>
-                    
+
                     <form
                         className="flex flex-col gap-3"
                         onSubmit={handleSubmit}
@@ -149,6 +187,7 @@ export default function Footer() {
                             <input
                                 type="text"
                                 placeholder={draft.notePlaceholderName}
+                                value={contactForm.name} // <-- ADD THIS
                                 className="w-full h-8 bg-white/70 px-3 rounded text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm"
                                 style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}
                                 onChange={(e) => handleContactFormChange("name", e.target.value)}
@@ -158,6 +197,7 @@ export default function Footer() {
                             <input
                                 type="email"
                                 placeholder={draft.notePlaceholderEmail}
+                                value={contactForm.email} // <-- ADD THIS
                                 className="w-full h-8 bg-white/70 px-3 rounded text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm"
                                 style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}
                                 onChange={(e) => handleContactFormChange("email", e.target.value)}
@@ -167,33 +207,29 @@ export default function Footer() {
                         <div className="relative">
                             <textarea
                                 placeholder={draft.notePlaceholderMessage}
+                                value={contactForm.message} // <-- ADD THIS
                                 className="w-full h-24 bg-white/70 px-3 py-2 rounded resize-none text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm"
                                 style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}
                                 onChange={(e) => handleContactFormChange("message", e.target.value)}
                                 aria-label="ההודעה שלי"
                             />
                         </div>
+                        {statusMsg && (
+                            <div className={`mt-3 ${statusMsg.type === 'error' ? 'text-red-200' : 'text-green-200'}`}>
+                                {statusMsg.text}
+                            </div>
+                        )}
                         <button
-                            className="bg-white text-[#f2665e] px-6 py-3 rounded hover:bg-gray-100 font-semibold transition-colors self-start"
-                            style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}>
-                            {draft.noteButtonText}
+                            type="submit"
+                            disabled={sending}
+className="bg-white text-[#f2665e] px-6 py-2 rounded hover:bg-gray-100 font-semibold transition-colors"                            style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}>
+                            {sending ? 'שולח...' : 'שלח'}
                         </button>
                     </form>
                 </div>
-                
+
                 {/* --- עמודה 2: פרטי יצירת קשר (צד שמאלי) --- */}
-                <div className="contactInfo flex flex-col items-center md:items-start"> 
-                    
-                    {/* כתובת: הקטנתי גופן, תיקנתי יישור והפכתי סדר אייקון */}
-                    <address className="font-normal text-sm [font-family:'Noto_Sans_Hebrew',Helvetica] tracking-[0] leading-[normal] [direction:rtl] not-italic mb-4 flex items-center justify-start">
-                        {/* תיקון יישור: justify-start (במקום end) עובד נכון ב-RTL
-                          תיקון סדר: האייקון עכשיו *לפני* הטקסט ב-JSX
-                          תיקון גודל: w-4 h-4 (במקום w-5 h-5) ו-ml-2 (במקום mr-2)
-                        */}
-                        <FaMapMarkerAlt className="inline-block w-4 h-4 ml-2" />
-                        {draft.contactAddress}
-                    </address>
-                    
+                <div className="contactInfo flex flex-col items-center md:items-start">
                     <iframe
                         title="map"
                         src={`https://maps.google.com/maps?q=${encodeURIComponent(draft.contactAddress)}&output=embed&t=m`}
@@ -203,6 +239,17 @@ export default function Footer() {
                         loading="lazy"
                         className="w-full max-w-[260px] mx-auto md:mx-0 mb-4 rounded shadow-md"
                     ></iframe>
+                    {/* כתובת: הקטנתי גופן, תיקנתי יישור והפכתי סדר אייקון */}
+                    <address className="font-normal text-sm [font-family:'Noto_Sans_Hebrew',Helvetica] tracking-[0] leading-[normal] [direction:rtl] not-italic mb-4 flex items-center justify-start">
+                        {/* תיקון יישור: justify-start (במקום end) עובד נכון ב-RTL
+                          תיקון סדר: האייקון עכשיו *לפני* הטקסט ב-JSX
+                          תיקון גודל: w-4 h-4 (במקום w-5 h-5) ו-ml-2 (במקום mr-2)
+                        */}
+                        <FaMapMarkerAlt className="inline-block w-4 h-4 ml-2" />
+                        {draft.contactAddress}
+                    </address>
+
+
 
                     {/* הקטנתי גופן (text-sm) והוספתי text-right */}
                     <p className="[font-family:'Noto_Sans_Hebrew',Helvetica] font-normal text-sm tracking-[0] leading-[normal] [direction:rtl] mb-4 text-right">
@@ -223,7 +270,7 @@ export default function Footer() {
                             {draft.contactEmail}
                         </a>
                     </p>
-                    
+
                     {/* הקטנתי גופן (text-sm) */}
                     <p className="font-normal text-sm text-center [font-family:'Noto_Sans_Hebrew',Helvetica] tracking-[0] leading-[normal] [direction:rtl] mt-auto pt-4">
                         {draft.creditNote}
@@ -244,7 +291,7 @@ export default function Footer() {
                     previewContent={EditContent}
                     adminControls={adminControls}
                 >
-                    {ViewContent} 
+                    {ViewContent}
                 </AdminControls>
             ) : (
                 ViewContent

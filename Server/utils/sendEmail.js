@@ -9,13 +9,18 @@ exports.sendEmail = async (email, subject, payload, template) => {
     console.log("inside send email");
 
 
+    // Ensure credentials are available
+    if (!config || !config.EMAIL_USER || !config.EMAIL_PASS) {
+      throw new Error('Missing email credentials: set EMAIL_USER and EMAIL_PASS in your environment or config');
+    }
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: config.USER,
-        pass: config.PASS, // App password
+        user: config.EMAIL_USER,
+        pass: config.EMAIL_PASS, // App password or SMTP password
       },
       tls: {
         rejectUnauthorized: false // Only for development
@@ -33,7 +38,7 @@ exports.sendEmail = async (email, subject, payload, template) => {
     const compiledTemplate = handlebars.compile(source);
 
     const mailOptions = {
-      from: process.env.USER,
+      from: config.EMAIL_USER || process.env.USER,
       to: email,
       subject,
       html: compiledTemplate(payload),

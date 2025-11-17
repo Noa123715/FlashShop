@@ -3,6 +3,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/ordersRoutes");
+const contactRoutes = require('./routes/contactRoutes');
 require("./db/mongoConnection");
 const {config}= require("./config/secret")
 const PORT = config.PORT || 5000;
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/auth",authRoutes);
 app.use("/products",productRoutes);
 app.use("/orders",orderRoutes);
+app.use('/contact', contactRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://${HOST_NAME}:${PORT}`);

@@ -23,16 +23,7 @@ exports.addProduct = async (req, res) => {
   try {
     const data = req.body;
     console.log('Received product data:', data);
-    // handle uploaded image if present
-    let imageData = [];
-    if (req.file) {
-      imageData.push({
-        data: req.file.buffer,
-        contentType: req.file.mimetype,
-      });
-    }
-    const dataWithImage = { ...data, image: imageData };
-    const product = new ProductModel(dataWithImage);
+    const product = new ProductModel(data);
     await product.save();
 
     console.log('Product saved:', product);
