@@ -15,7 +15,7 @@ export default function AppRoutes() {
 
                 {/* All other routes - with Layout */}
                 <Route path="/home" element={<Layout>  <HomePage /> </Layout>} />
-                <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+                <Route path="/tips/*" element={<Layout><AboutPage /></Layout>} />
                 <Route path="/terms" element={<Layout> <TermsModal /> </Layout>} />
                 <Route path="/tips" element={<Layout> <Tips /> </Layout>} />
 

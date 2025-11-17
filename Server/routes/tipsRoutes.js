@@ -3,10 +3,10 @@ const router = express.Router();
 const multer = require("multer");
 const tipsController = require("../controllers/tipsController.js");
 
-// --- Multer setup ---
-const upload = multer(); // store file in memory as Buffer
+const upload = multer();
 
 
 router.get("/", tipsController.getAllTips);
+router.post("/", tipsController.addTip);
 
 module.exports = router;

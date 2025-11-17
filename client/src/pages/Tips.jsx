@@ -1,25 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { getAllTips } from '../api/auth';
+import { getAllTips } from '../api/pages.js';
 import AdminControls from "../components/AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
+import { Link } from "react-router-dom";
 
 export default function Tips() {
-    const isAdmin = localStorage.getItem("admin");
+    const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") === 'true');
     const adminControls = useAdminControl({ title: "", img: "" }, "tips");
     const { draft, updateDraft, editMode, previewMode } = adminControls;
+
+    const [tipsList, setTipsList] = useState([]);
 
     useEffect(() => {
         axios.get("http://localhost:4000/api/page/tips").then((res) => {
             adminControls.setPage(res.data);
             adminControls.setDraft(res.data);
-        });
+        }).catch(error => console.error("Error fetching main tips page data:", error));
 
         getAllTips().then((response) => {
             console.log("Tips data:", response.data);
+            setTipsList(response.data);
         }).catch((error) => {
-            console.error("Error fetching tips:", error);
+            console.error("Error fetching tips list:", error);
         });
+        setIsAdmin(localStorage.getItem("isAdmin") === 'true');
+
     }, []);
 
     const EditContent = (
@@ -28,6 +34,7 @@ export default function Tips() {
                 className="w-full h-64 p-4 border border-gray-300 rounded mb-4"
                 value={draft.title}
                 onChange={(e) => updateDraft({ title: e.target.value })}
+                placeholder="כותרת ראשית לעמוד הטיפים"
             />
             <label className="block mb-2 font-semibold">🔗 Main Image URL:</label>
             <input
@@ -35,34 +42,70 @@ export default function Tips() {
                 type="text"
                 value={draft.img}
                 onChange={(e) => updateDraft({ img: e.target.value })}
+                placeholder="הזן כתובת URL לתמונת הרקע העליונה"
             />
         </div>
     );
 
     const ViewContent = (
         <div className="w-full">
-            <h2>{draft.title}</h2>
-            <img
-                src={draft.img}
-                alt="main image"
-            />
+            <div
+                className="relative h-[300px] sm:h-[400px] bg-cover bg-center flex items-end justify-center text-white p-6"
+                style={{ backgroundImage: `url(${draft.img})` }}
+            >
+                <div className="absolute inset-0 bg-black opacity-40"></div>
+                <h1 className="relative z-10 text-4xl sm:text-5xl font-bold text-center drop-shadow-lg">
+                    {draft.title || "הטיפים שלנו"}
+                </h1>
+            </div>
+            <div className="container mx-auto px-4 py-12">
+                {tipsList.length === 0 ? (
+                    <p className="text-center text-xl text-gray-600">טוען טיפים...</p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {tipsList.map(tip => (
+                            <div
+                                key={tip._id}
+                                className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                            >
+                                <img
+                                    src={tip.img}
+                                    alt={tip.title}
+                                    className="w-full h-48 object-cover"
+                                />
+                                <div className="p-6 text-right">
+                                    <h4 className="text-2xl font-bold mb-3 text-gray-800">
+                                        {tip.title}
+                                    </h4>
+                                    <p className="text-gray-600 text-base mb-4 leading-relaxed">
+                                        {tip.summary}
+                                    </p>
+                                    <Link
+                                        to={`/tips/${tip._id}`}
+                                        state={{ tip }}
+                                        className="inline-block px-6 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition-colors duration-300"
+                                    >
+                                        קרא עוד
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 
-    console.log("isAdmin:", isAdmin);
     return (
-        <div style={{ padding: "20px", maxWidth: 800, margin: "auto" }}>
-            {/* Admin Controls */}
-            {isAdmin && (
-                <AdminControls
-                    isAdmin={isAdmin}
-                    editMode={editMode}
-                    previewContent={EditContent}
-                    adminControls={adminControls}
-                >
-                    {ViewContent}
-                </AdminControls>
-            )}
+        <div className="min-h-screen bg-gray-50">
+            <AdminControls
+                isAdmin={isAdmin}
+                editMode={editMode}
+                previewContent={EditContent}
+                adminControls={adminControls}
+            >
+                {ViewContent}
+            </AdminControls>
         </div>
     );
 }

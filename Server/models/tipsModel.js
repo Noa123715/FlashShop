@@ -1,16 +1,15 @@
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+const mongoose = require("mongoose");
 
-const tipsSchema = new Schema(
+const tipsSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
         img: { type: String, required: true },
+        summary: { type: String, required: true },
         content: { type: String, required: true },
-        createdAt: { type: Date, default: Date.now, expires: 3600 },
-        updatedAt: { type: Date, default: Date.now },
     },
-    { timestamps: true }
+    {
+        timestamps: true
+    }
 );
 
-const Tips = mongoose.model("Tips", tipsSchema);
-export default Tips;
+exports.TipsModel = mongoose.model("Tips", tipsSchema);

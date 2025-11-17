@@ -19,6 +19,7 @@ exports.getProductById = async (req, res) => {
     res.status(500).json({ msg: "There was an error, try again later", err });
   }
 };
+
 exports.addProduct = async (req, res) => {
   try {
     const data = req.body;
@@ -42,7 +43,6 @@ exports.addProduct = async (req, res) => {
     res.status(500).json({ msg: "There was an error, try again later", err });
   }
 };
-
 
 exports.updateProduct = async (req, res) => {
   try {
@@ -90,6 +90,7 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ msg: "There was an error, try again later", err });
   }
 };
+
 exports.getProductImage = async (req, res) => {
   try {
     const product = await ProductModel.findById(req.params.id);

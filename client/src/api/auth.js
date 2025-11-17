@@ -33,7 +33,3 @@ export const resetPassword = async (token, newPassword) => {
     });
     return response;
 };
-export const getAllTips = async () => {
-    const response = await axios.get(`${API_URL}/tips`, {});
-    return response;
-};
