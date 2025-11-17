@@ -4,13 +4,13 @@ import { getAllTips } from '../api/pages.js';
 import AdminControls from "../components/AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import { Link } from "react-router-dom";
+import { useTipsStore } from "../store/tipsStore.js";
 
 export default function Tips() {
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") === 'true');
     const adminControls = useAdminControl({ title: "", img: "" }, "tips");
     const { draft, updateDraft, editMode, previewMode } = adminControls;
-
-    const [tipsList, setTipsList] = useState([]);
+    const tipsList = useTipsStore((state) => state.tipsList);
 
     useEffect(() => {
         axios.get("http://localhost:4000/api/page/tips").then((res) => {
@@ -20,7 +20,7 @@ export default function Tips() {
 
         getAllTips().then((response) => {
             console.log("Tips data:", response.data);
-            setTipsList(response.data);
+            useTipsStore.getState().setTipsList(response.data);
         }).catch((error) => {
             console.error("Error fetching tips list:", error);
         });
@@ -82,11 +82,12 @@ export default function Tips() {
                                     </p>
                                     <Link
                                         to={`/tips/${tip._id}`}
-                                        state={{ tip }}
+                                        onClick={() => useTipsStore.getState().setCurrentTip(tip)}
                                         className="inline-block px-6 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition-colors duration-300"
                                     >
                                         קרא עוד
                                     </Link>
+
                                 </div>
                             </div>
                         ))}

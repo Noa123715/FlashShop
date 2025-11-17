@@ -1,25 +1,25 @@
 import { useEffect } from "react";
 import axios from "axios";
 import AdminControls from "./AdminControls.jsx";
-import { useLocation } from "react-router-dom";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
+import { useParams } from "react-router-dom";
+import { useTipsStore } from "../store/tipsStore";
 
 export default function AboutPage() {
     const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl({ content: "", image1: "" }, "about");
     const { draft, updateDraft, editMode, previewMode } = adminControls;
-    const location = useLocation();
-    const tip = location.state?.tip;
+    const { id } = useParams();
+    const { currentTip, tipsList } = useTipsStore();
 
-    if (!tip) {
-        return <div>טיפ לא נמצא</div>;
-    }
+    const tip = currentTip || tipsList.find(t => t._id === id);
+
+    if (!tip) return <p>טוען...</p>;
     return (
-        <div className="max-w-4xl mx-auto px-6 py-12">
-            <img src={tip.img} alt={tip.title} className="w-full h-96 object-cover rounded-lg mb-6" />
-            <h1 className="text-5xl font-bold mb-4">{tip.title}</h1>
-            <p className="text-xl text-gray-600 mb-6">{tip.summary}</p>
-            <p className="text-lg text-gray-700 leading-relaxed">{tip.content}</p>
+        <div className="container mx-auto px-4 py-12">
+            <img src={tip.img} alt={tip.title} className="w-full h-80 object-cover rounded-xl" />
+            <h1 className="text-4xl font-bold mt-6 mb-4">{tip.title}</h1>
+            <p className="text-lg leading-relaxed">{tip.content}</p>
         </div>
     );
     // const EditContent = (
