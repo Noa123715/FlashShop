@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { getAllTips } from '../api/pages.js';
 import AdminControls from "../components/AdminControls.jsx";
@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { useTipsStore } from "../store/tipsStore.js";
 
 export default function Tips() {
-    const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") === 'true');
+    const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl({ title: "", img: "" }, "tips");
     const { draft, updateDraft, editMode, previewMode } = adminControls;
     const tipsList = useTipsStore((state) => state.tipsList);
@@ -24,8 +24,6 @@ export default function Tips() {
         }).catch((error) => {
             console.error("Error fetching tips list:", error);
         });
-        setIsAdmin(localStorage.getItem("isAdmin") === 'true');
-
     }, []);
 
     const EditContent = (
@@ -55,9 +53,22 @@ export default function Tips() {
             >
                 <div className="absolute inset-0 bg-black opacity-40"></div>
                 <h1 className="relative z-10 text-4xl sm:text-5xl font-bold text-center drop-shadow-lg">
-                    {draft.title || "הטיפים שלנו"}
+                    {draft.title}
                 </h1>
             </div>
+        </div>
+    );
+
+    return (
+        <>
+            <AdminControls
+                isAdmin={isAdmin}
+                editMode={editMode}
+                previewContent={EditContent}
+                adminControls={adminControls}
+            >
+                {ViewContent}
+            </AdminControls>
             <div className="container mx-auto px-4 py-12">
                 {tipsList.length === 0 ? (
                     <p className="text-center text-xl text-gray-600">טוען טיפים...</p>
@@ -81,7 +92,7 @@ export default function Tips() {
                                         {tip.summary}
                                     </p>
                                     <Link
-                                        to={`/tips/${tip._id}`}
+                                        to={`/tips/tip_page`}
                                         onClick={() => useTipsStore.getState().setCurrentTip(tip)}
                                         className="inline-block px-6 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition-colors duration-300"
                                     >
@@ -94,19 +105,6 @@ export default function Tips() {
                     </div>
                 )}
             </div>
-        </div>
-    );
-
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <AdminControls
-                isAdmin={isAdmin}
-                editMode={editMode}
-                previewContent={EditContent}
-                adminControls={adminControls}
-            >
-                {ViewContent}
-            </AdminControls>
-        </div>
+        </>
     );
 }
