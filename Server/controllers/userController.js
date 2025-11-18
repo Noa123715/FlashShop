@@ -16,6 +16,10 @@ exports.signup = async (req, res, next) => {
       console.log(validateBody.error.details);
       return res.status(400).json(validateBody.error.details);
     }
+    let old_user = await UserModel.findOne({ email: req.body.email });
+    if(old_user)
+    { return res.status(400).json({ msg: "User already in system, try to log in" }); }
+
     let user = new UserModel(req.body);
     console.log(user);
     user.password = await bcrypt.hash(user.password, 10);
