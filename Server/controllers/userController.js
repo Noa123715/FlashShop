@@ -47,11 +47,31 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ msg: "User or password not match" });
     }
     let token = createToken(user._id, user.role);
-    res.json({ token });
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: 'Lax'
+    });
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
+    res.json({
+      msg: "Login successful",
+      user: userWithoutPassword
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ msg: "There was an error, try again later", err });
   }
+};
+
+exports.logout = async (req, res) => {
+  res.clearCookie('authToken', {
+    httpOnly: true,
+    secure: config.NODE_ENV === 'production',
+    sameSite: 'Lax'
+  });
+  res.json({ msg: "Logout successful" });
 };
 
 exports.requestPasswordReset = async (req, res, next) => {

@@ -1,51 +1,49 @@
 import { create } from 'zustand';
-import { jwtDecode } from 'jwt-decode';
-import { getCookie, deleteCookie } from '../utils/cookieUtils';
-
-const decodeToken = (token) => {
-    try {
-        const decoded = jwtDecode(token);
-        return {
-            userId: decoded._id,
-            role: decoded.role,
-            isAuthenticated: true,
-        };
-    } catch (error) {
-        return {
-            userId: null,
-            role: null,
-            isAuthenticated: false,
-        };
-    }
-};
 
 const useAuthStore = create((set) => ({
-    token: null,
     userId: null,
     role: null,
     isAuthenticated: null,
 
-    login: (token) => {
-        const { userId, role, isAuthenticated } = decodeToken(token);
-        set({ token, userId, role, isAuthenticated });
+    login: (user) => {
+        if (user && user._id && user.role) {
+            set({
+                userId: user._id,
+                role: user.role,
+                isAuthenticated: true
+            });
+        }
     },
 
-    logout: () => {
-        deleteCookie('authToken');
-        set({ token: null, userId: null, role: null, isAuthenticated: false });
+    logout: async () => {
+        try {
+            await signOut();
+        } catch (error) {
+            console.error("Logout failed on server:", error);
+        }
+        set({ userId: null, role: null, isAuthenticated: false });
     },
 
-    initialize: () => {
-        const token = getCookie('authToken');
-        if (token) {
-            const { userId, role, isAuthenticated } = decodeToken(token);
-            set({ token, userId, role, isAuthenticated });
+    initialize: async () => {
+        try {
+            const response = await fetchUserInfo();
+            const user = response.data;
+            if (user && user._id && user.role) {
+                set({
+                    userId: user._id,
+                    role: user.role,
+                    isAuthenticated: true
+                });
+            } else {
+                set({ isAuthenticated: false });
+            }
+        } catch (error) {
+            set({ userId: null, role: null, isAuthenticated: false });
         }
     },
 
     isAdmin: () => {
-        const state = useAuthStore.getState();
-        return useAuthStore.getState().role === 'admin';;
+        return useAuthStore.getState().role === 'admin';
     },
 }));
 

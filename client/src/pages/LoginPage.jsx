@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { signIn } from '../api/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
-import { setCookie } from '../utils/cookieUtils';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -36,9 +35,11 @@ export default function LoginPage() {
     setErrors({});
     signIn(email, password)
       .then((response) => {
-        const token = response.data.token;
-        setCookie('authToken', token, 7);
-        login(token);
+        console.log("here")
+        const { user } = response.data;
+        console.log("user " + user);
+        login(user);
+        console.log("success?");
         Navigate('/home');
       })
       .catch((error) => {
