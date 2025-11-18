@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { signIn } from '../api/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
 
   const Navigate = useNavigate();
+  const login = useAuthStore(state => state.login);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,8 +35,8 @@ export default function LoginPage() {
     setErrors({});
     signIn(email, password)
       .then((response) => {
-        // Save admin status in localStorage - need to fix that
-        localStorage.setItem('admin', true);
+        const token = response.data.token;
+        login(token);
         Navigate('/home');
       })
       .catch((error) => {
@@ -210,7 +212,7 @@ export default function LoginPage() {
 
           <div style={{ textAlign: 'right', marginBottom: '24px' }}>
             <a
-              href="#forgot"
+              href="/forgot"
               style={{
                 color: '#667eea',
                 textDecoration: 'none',
@@ -323,8 +325,8 @@ export default function LoginPage() {
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         }}>
           Don't have an account?{' '}
-          <a
-            href="#signup"
+          <Link
+            to="/signup"
             style={{
               color: '#667eea',
               textDecoration: 'none',
@@ -335,7 +337,7 @@ export default function LoginPage() {
             onMouseLeave={(e) => e.target.style.color = '#667eea'}
           >
             Sign up
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -5,10 +5,11 @@ import AdminControls from "../components/AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import { Link } from "react-router-dom";
 import { useTipsStore } from "../store/tipsStore.js";
+import useAuthStore from "../store/authStore.js";
 
 export default function Tips() {
     const TIPS_PER_PAGE = 9;
-    const isAdmin = localStorage.getItem("admin");
+    const isAdmin = useAuthStore(state => state.isAdmin());
     const adminControls = useAdminControl({ title: "", img: "" }, "tips");
     const { currentTip, setCurrentTip, tipsList, setTipsList } = useTipsStore();
     const { draft, updateDraft, editMode, previewMode } = adminControls;
@@ -166,7 +167,6 @@ export default function Tips() {
     return (
         <>
             <AdminControls
-                isAdmin={isAdmin}
                 editMode={editMode}
                 previewContent={EditContent}
                 adminControls={adminControls}

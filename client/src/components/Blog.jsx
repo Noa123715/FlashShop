@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTipsStore } from "../store/tipsStore.js";
 import { getAllTips } from '../api/pages.js';
+import useAuthStore from '../store/authStore';
 
 const saveTipChanges = async (tipId, updatedData) => {
     try {
@@ -15,17 +16,13 @@ const saveTipChanges = async (tipId, updatedData) => {
 };
 
 export default function Blog() {
-    const [isAdmin, setIsAdmin] = useState(false);
-
+    const isAdmin = useAuthStore(state => state.isAdmin());
     const { currentTip, setCurrentTip, tipsList, setTipsList, updateTipInList } = useTipsStore();
     const [editMode, setEditMode] = useState(false);
     const [draft, setDraft] = useState({});
 
     useEffect(() => {
-        const adminStatus = localStorage.getItem("admin") === "true";
-        setIsAdmin(adminStatus);
         const handleStorageChange = () => {
-            setIsAdmin(localStorage.getItem("admin") === "true");
         };
         window.addEventListener('storage', handleStorageChange);
 

@@ -5,8 +5,6 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
-    // Check admin status from localStorage - need to fix that
-    const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl({
         title: "",
         mainImg: "",
@@ -166,17 +164,13 @@ export default function HomePage() {
 
     return (
         <div style={{ padding: "20px", maxWidth: 800, margin: "auto" }}>
-            {/* Admin Controls */}
-            {isAdmin && (
-                <AdminControls
-                    isAdmin={isAdmin}
-                    editMode={editMode}
-                    previewContent={EditContent}
-                    adminControls={adminControls}
-                >
-                    {ViewContent}
-                </AdminControls>
-            )}
+            <AdminControls
+                editMode={editMode}
+                previewContent={EditContent}
+                adminControls={adminControls}
+            >
+                {ViewContent}
+            </AdminControls>
         </div>
     );
 }
