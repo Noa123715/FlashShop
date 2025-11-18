@@ -6,10 +6,8 @@ import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import { Link } from "react-router-dom";
 import { useTipsStore } from "../store/tipsStore.js";
 
-// קבוע המגדיר כמה טיפים יוצגו בכל עמוד
-const TIPS_PER_PAGE = 9;
-
 export default function Tips() {
+    const TIPS_PER_PAGE = 9;
     const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl({ title: "", img: "" }, "tips");
     const { currentTip, setCurrentTip, tipsList, setTipsList } = useTipsStore();
@@ -21,30 +19,41 @@ export default function Tips() {
         summary: "",
         content: ""
     });
-
-    // 💡 משתני מצב חדשים עבור Pagination
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalTipsCount, setTotalTipsCount] = useState(0);
 
     useEffect(() => {
         axios.get("http://localhost:4000/api/page/tips").then((res) => {
             adminControls.setPage(res.data);
             adminControls.setDraft(res.data);
         }).catch(error => console.error("Error fetching main tips page data:", error));
-
-        getAllTips().then((response) => {
-            // מעדכן את הרשימה ב-Store
-            useTipsStore.getState().setTipsList(response.data);
+    }, []);
+    useEffect(() => {
+        const skip = (currentPage - 1) * TIPS_PER_PAGE;
+        axios.get(`http://localhost:5000/tips`, {
+            params: {
+                page: currentPage,
+                limit: TIPS_PER_PAGE,
+                sortBy: 'createdAt',
+                order: 'desc'
+            }
+        }).then((response) => {
+            const { tips, totalCount } = response.data;
+            useTipsStore.getState().setTipsList(tips);
+            setTotalTipsCount(totalCount);
         }).catch((error) => {
             console.error("Error fetching tips list:", error);
+            useTipsStore.getState().setTipsList([]);
         });
-    }, []);
+
+    }, [currentPage]);
+
 
     const enterEditMode = () => {
         if (!isAdmin) {
             console.warn("Attempt to enter edit mode without admin privileges.");
             return;
         }
-        // מאפס את ה-Draft ואת העמוד הנוכחי כשנכנסים למצב עריכה
         setTipDraft({ title: "", img: "", summary: "", content: "" });
         setEditModeTip(true);
     };
@@ -58,18 +67,20 @@ export default function Tips() {
             useTipsStore.getState().setTipsList([...tipsList, addTip]);
             setCurrentTip({});
             setEditModeTip(false);
-            setCurrentPage(Math.ceil((tipsList.length + 1) / TIPS_PER_PAGE));
+            setCurrentPage(1);
+            setTotalTipsCount(prevCount => prevCount + 1);
+
         } catch (error) {
             alert(error.message);
         }
     };
-    const totalPages = Math.ceil(tipsList.length / TIPS_PER_PAGE);
+    const totalPages = Math.ceil(totalTipsCount / TIPS_PER_PAGE);
 
-    const currentTips = useMemo(() => {
-        const startIndex = (currentPage - 1) * TIPS_PER_PAGE;
-        const endIndex = startIndex + TIPS_PER_PAGE;
-        return tipsList.slice(startIndex, endIndex);
-    }, [tipsList, currentPage]);
+    // const currentTips = useMemo(() => {
+    //     const startIndex = (currentPage - 1) * TIPS_PER_PAGE;
+    //     const endIndex = startIndex + TIPS_PER_PAGE;
+    //     return tipsList.slice(startIndex, endIndex);
+    // }, [tipsList, currentPage]);
 
     const handlePageChange = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -131,8 +142,8 @@ export default function Tips() {
                         key={number}
                         onClick={() => handlePageChange(number)}
                         className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${number === currentPage
-                                ? "!bg-pink-500 text-white shadow-md"
-                                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+                            ? "!bg-pink-500 text-white shadow-md"
+                            : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
                             }`}
                         aria-current={number === currentPage ? "page" : undefined}
                     >
@@ -168,7 +179,7 @@ export default function Tips() {
                 ) : (
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {currentTips.map(tip => (
+                            {tipsList.map(tip => (
                                 <div
                                     key={tip._id}
                                     className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
