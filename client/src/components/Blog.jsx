@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTipsStore } from "../store/tipsStore.js";
 import { getAllTips } from '../api/pages.js';
+import useAuthStore from '../store/authStore';
 
 const saveTipChanges = async (tipId, updatedData) => {
     try {
@@ -10,22 +11,18 @@ const saveTipChanges = async (tipId, updatedData) => {
 
     } catch (error) {
         console.error("Error saving tip changes:", error);
-        throw new Error("שמירת השינויים נכשלה. (ייתכן שאינך מורשה)");
+        throw new Error("שמירת השינויים נכשלה.");
     }
 };
 
 export default function Blog() {
-    const [isAdmin, setIsAdmin] = useState(false);
-
+    const isAdmin = useAuthStore(state => state.isAdmin());
     const { currentTip, setCurrentTip, tipsList, setTipsList, updateTipInList } = useTipsStore();
     const [editMode, setEditMode] = useState(false);
     const [draft, setDraft] = useState({});
 
     useEffect(() => {
-        const adminStatus = localStorage.getItem("admin") === "true";
-        setIsAdmin(adminStatus);
         const handleStorageChange = () => {
-            setIsAdmin(localStorage.getItem("admin") === "true");
         };
         window.addEventListener('storage', handleStorageChange);
 
@@ -108,25 +105,32 @@ export default function Blog() {
 
     return (
         <div className="container mx-auto px-4 py-12 min-h-screen">
-            {/* 1. אזור הכותרת והתמונה הראשית (באנר) */}
             <div className="relative mb-12">
                 <img
                     src={displayData.img}
                     alt={displayData.title}
                     className="w-full h-[400px] object-cover shadow-xl"
                 />
-
-                {/* הכותרת על התמונה */}
                 <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 w-3/4 max-w-4xl">
                     <div className="p-4 md:p-6 text-center">
                         {editMode && isAdmin ? (
-                            <input
-                                type="text"
-                                value={draft.title}
-                                onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-                                className="text-4xl md:text-5xl font-extrabold text-white w-full bg-transparent border-b-2 border-white focus:outline-none placeholder-white drop-shadow-lg"
-                                placeholder="כותרת הטיפ"
-                            />
+                            <div className="mb-6">
+                                <label className="block mb-2 font-semibold text-white">🔗 Main Image URL:</label>
+                                <input
+                                    className="w-full p-2 border border-gray-300 rounded text-white"
+                                    type="text"
+                                    value={draft.img}
+                                    onChange={(e) => setDraft({ ...draft, img: e.target.value })}
+                                    placeholder="הזן כתובת URL לתמונת הרקע העליונה"
+                                />
+                                <input
+                                    type="text"
+                                    value={draft.title}
+                                    onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+                                    className="text-4xl md:text-5xl font-extrabold text-white w-full bg-transparent border-b-2 border-white focus:outline-none placeholder-white drop-shadow-lg"
+                                    placeholder="כותרת הטיפ"
+                                />
+                            </div>
                         ) : (
                             <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
                                 {displayData.title}
@@ -136,7 +140,6 @@ export default function Blog() {
                 </div>
 
             </div>
-            {/* 2. אזור התוכן */}
             <div className="mb-8 text-right max-w-5xl mx-auto">
                 {editMode && isAdmin ? (
                     <textarea
@@ -175,43 +178,29 @@ export default function Blog() {
                     )}
                 </div>
             )}
-
-            {/* 3. פוסט קודם/הבא - תוקן JSX ומיקום תמונה */}
             <div className="w-full flex justify-between gap-6 mt-16 border-t pt-8 border-gray-200 max-w-5xl mx-auto">
                 {prevTip && (
                     <div onClick={goToPrev} className="flex items-center w-full max-w-sm cursor-pointer bg-white rounded-xl shadow-md hover:shadow-lg transition p-3 text-right border border-gray-100">
-
-                        {/* 1. התמונה ראשונה ב-JSX = תופיע בימין (ב-RTL) */}
                         <img src={prevTip.img} alt={prevTip.title} className="w-24 h-20 object-cover rounded-md flex-shrink-0" />
-
-                        {/* 2. הטקסט שני ב-JSX = יופיע בשמאל */}
                         <div className="mr-4">
                             <span className="text-xs text-blue-500 font-bold mb-1 block">➡️ טיפ קודם</span>
                             <h4 className="text-lg font-bold text-gray-800 line-clamp-2">{prevTip.title}</h4>
                             <p className="text-xs text-gray-700 font-semibold mt-1 line-clamp-1">{prevTip.summary}</p>
                         </div>
-                    </div> // סגירת תגית DIV
+                    </div>
                 )}
-
-                {/* כדי לוודא ששני הכרטיסים לא מחוברים אחד לשני כששניהם קיימים */}
                 {(!prevTip && nextTip) && <div className="w-1/2 max-w-sm"></div>}
 
                 {nextTip && (
                     <div onClick={goToNext} className="flex items-center w-full max-w-sm cursor-pointer bg-white rounded-xl shadow-md hover:shadow-lg transition p-3 text-right border border-gray-100">
-
-                        {/* התמונה בחוץ (שמאל) */}
                         <img src={nextTip.img} alt={nextTip.title} className="w-24 h-20 object-cover rounded-md flex-shrink-0" />
-
-                        {/* הטקסט בפנים (ימין) */}
                         <div className="mr-4">
                             <span className="text-xs text-blue-500 font-bold mb-1 block">⬅️ טיפ הבא</span>
                             <h4 className="text-lg font-bold text-gray-800 line-clamp-2">{nextTip.title}</h4>
                             <p className="text-xs text-gray-700 font-semibold mt-1 line-clamp-1">{nextTip.summary}</p>
                         </div>
-                    </div> // סגירת תגית DIV
+                    </div>
                 )}
-
-                {/* כדי לוודא ששני הכרטיסים לא מחוברים אחד לשני כששניהם קיימים */}
                 {(prevTip && !nextTip) && <div className="w-1/2 max-w-sm"></div>}
             </div>
         </div>

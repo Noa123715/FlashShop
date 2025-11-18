@@ -4,7 +4,6 @@ import AdminControls from "./AdminControls";
 import { useAdminControl } from "../hooks/useAdminControl";
 
 export default function Header() {
-    const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl({ logo: "" }, "header");
     const { draft, updateDraft, editMode } = adminControls;
 
@@ -39,16 +38,13 @@ export default function Header() {
 
     return (
         <div style={{ padding: "20px", maxWidth: 800, margin: "auto" }}>
-            {isAdmin && (
                 <AdminControls
-                    isAdmin={isAdmin}
                     editMode={editMode}
                     previewContent={EditContent}
                     adminControls={adminControls}
                 >
                     {ViewContent}
                 </AdminControls>
-            )}
         </div>
     );
 }

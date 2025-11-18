@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
+import useAuthStore from '../store/authStore';
 
 export default function TermsModal() {
-    const isAdmin = localStorage.getItem("admin");
+    const isAdmin = useAuthStore(state => state.isAdmin());
     const adminControls = useAdminControl(
         { title: "", content: "", btnText: "" },
         "terms"
@@ -78,7 +79,6 @@ export default function TermsModal() {
 
                 {isAdmin && (
                     <AdminControls
-                        isAdmin={isAdmin}
                         editMode={editMode}
                         previewContent={EditContent}
                         adminControls={adminControls}

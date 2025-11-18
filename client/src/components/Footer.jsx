@@ -7,7 +7,6 @@ import { useAdminControl } from "../hooks/useAdminControl";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from "react-icons/fa";
 
 export default function Footer() {
-    const isAdmin = localStorage.getItem("admin");
     const adminControls = useAdminControl(
         {
             noteTitle: "",
@@ -59,7 +58,7 @@ export default function Footer() {
     }, []);
 
     const EditContent = (
-       
+
         <>
             <div className="sendANote">
                 <input
@@ -190,18 +189,13 @@ export default function Footer() {
 
     return (
         <>
-            {isAdmin ? (
-                <AdminControls
-                    isAdmin={isAdmin}
-                    editMode={editMode}
-                    previewContent={EditContent}
-                    adminControls={adminControls}
-                >
-                    {ViewContent} 
-                </AdminControls>
-            ) : (
-                ViewContent
-            )}
+            <AdminControls
+                editMode={editMode}
+                previewContent={EditContent}
+                adminControls={adminControls}
+            >
+                {ViewContent}
+            </AdminControls>
         </>
     );
 }
