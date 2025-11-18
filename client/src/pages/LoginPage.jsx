@@ -36,13 +36,9 @@ export default function LoginPage() {
     setErrors({});
     signIn(email, password)
       .then((response) => {
-        console.log("hello");
         const token = response.data.token;
-        console.log("the token");
         setCookie('authToken', token, 7);
-        console.log("the cookie");
         login(token);
-        console.log("successful");
         Navigate('/home');
       })
       .catch((error) => {

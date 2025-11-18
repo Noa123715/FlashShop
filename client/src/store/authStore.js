@@ -45,7 +45,7 @@ const useAuthStore = create((set) => ({
 
     isAdmin: () => {
         const state = useAuthStore.getState();
-        return state.role;
+        return useAuthStore.getState().role === 'admin';;
     },
 }));
 
