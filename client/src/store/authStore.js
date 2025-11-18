@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { jwtDecode } from 'jwt-decode';
+import { getCookie, deleteCookie } from '../utils/cookieUtils';
 
 const decodeToken = (token) => {
     try {
@@ -19,24 +20,23 @@ const decodeToken = (token) => {
 };
 
 const useAuthStore = create((set) => ({
-    token: localStorage.getItem('token') || null,
+    token: null,
     userId: null,
     role: null,
-    isAuthenticated: !!localStorage.getItem('token'),
+    isAuthenticated: null,
 
     login: (token) => {
-        localStorage.setItem('token', token);
         const { userId, role, isAuthenticated } = decodeToken(token);
         set({ token, userId, role, isAuthenticated });
     },
 
     logout: () => {
-        localStorage.removeItem('token');
+        deleteCookie('authToken');
         set({ token: null, userId: null, role: null, isAuthenticated: false });
     },
 
     initialize: () => {
-        const token = localStorage.getItem('token');
+        const token = getCookie('authToken');
         if (token) {
             const { userId, role, isAuthenticated } = decodeToken(token);
             set({ token, userId, role, isAuthenticated });
@@ -45,7 +45,7 @@ const useAuthStore = create((set) => ({
 
     isAdmin: () => {
         const state = useAuthStore.getState();
-        return state.role === 'admin';
+        return state.role;
     },
 }));
 

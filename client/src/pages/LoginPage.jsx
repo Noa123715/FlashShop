@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { signIn } from '../api/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
+import { setCookie } from '../utils/cookieUtils';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -35,11 +36,17 @@ export default function LoginPage() {
     setErrors({});
     signIn(email, password)
       .then((response) => {
+        console.log("hello");
         const token = response.data.token;
+        console.log("the token");
+        setCookie('authToken', token, 7);
+        console.log("the cookie");
         login(token);
+        console.log("successful");
         Navigate('/home');
       })
       .catch((error) => {
+        console.log(error);
         alert('Login failed. Please check your credentials and try again.');
       });
   };
