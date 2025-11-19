@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { getPage } from "../api/pages";
 import AdminControls from "./AdminControls";
 import { useAdminControl } from "../hooks/useAdminControl";
 
@@ -51,9 +51,9 @@ export default function Footer() {
     };
 
     useEffect(() => {
-        axios.get("http://localhost:4000/api/page/footer").then((res) => {
-            adminControls.setPage(res.data);
-            adminControls.setDraft(res.data);
+        getPage("terms").then((data) => {
+            adminControls.setPage(data);
+            adminControls.setDraft(data);
         });
     }, []);
 

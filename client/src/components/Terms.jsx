@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { getPage } from "../api/pages";
 import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import useAuthStore from '../store/authStore';
@@ -15,10 +15,10 @@ export default function Terms() {
     const [isOpen, setIsOpen] = useState(true);
 
     useEffect(() => {
-        axios.get("http://localhost:4000/api/page/terms").then((res) => {
-            adminControls.setPage(res.data);
-            adminControls.setDraft(res.data);
-        });
+        getPage("terms").then((data) => {
+        adminControls.setPage(data);
+        adminControls.setDraft(data);
+    });
     }, []);
 
     const handleAgree = () => {
