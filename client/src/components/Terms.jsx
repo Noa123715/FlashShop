@@ -3,6 +3,7 @@ import { getPage } from "../api/pages";
 import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import useAuthStore from '../store/authStore';
+import useAppStore from '../store/appStore';
 
 export default function Terms() {
     const isAdmin = useAuthStore(state => state.isAdmin());
@@ -11,18 +12,18 @@ export default function Terms() {
         "terms"
     );
     const { draft, updateDraft, editMode, previewMode } = adminControls;
-    
     const [isOpen, setIsOpen] = useState(true);
+    const setTermsAgreed = useAppStore(state => state.setTermsAgreed);
 
     useEffect(() => {
         getPage("terms").then((data) => {
-        adminControls.setPage(data);
-        adminControls.setDraft(data);
-    });
+            adminControls.setPage(data);
+            adminControls.setDraft(data);
+        });
     }, []);
 
     const handleAgree = () => {
-        localStorage.setItem("termsAgreed", "true");
+        setTermsAgreed(true);
         setIsOpen(false);
     };
 
@@ -90,3 +91,12 @@ export default function Terms() {
         </div>
     );
 }
+
+// import useAppStore from '../store/appStore';
+
+// // בתוך קומפוננטה:
+// const termsAgreed = useAppStore(state => state.termsAgreed);
+
+// if (termsAgreed) {
+//     // בצע פעולה...
+// }
