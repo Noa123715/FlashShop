@@ -3,7 +3,6 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import BlogPage from "./pages/BlogPage"
 import Terms from "./components/Terms";
-import Club from "./components/Club";
 import LoginPage from "./pages/LoginPage";
 import TipsPage from "./pages/TipsPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -21,7 +20,6 @@ export default function AppRoutes() {
                 <Route path="/" element={<Layout>  <HomePage /> </Layout>} />
                 <Route path="/tips/*" element={<Layout><BlogPage /></Layout>} />
                 <Route path="/terms" element={<Layout> <Terms /> </Layout>} />
-                <Route path="/club" element={<Layout> <Club /> </Layout>} />
                 <Route path="/tips" element={<Layout> <TipsPage /> </Layout>} />
                 {/* Redirect to home */}
                 <Route path="*" element={<Navigate to="/" />} />

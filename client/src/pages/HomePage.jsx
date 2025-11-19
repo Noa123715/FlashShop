@@ -3,6 +3,7 @@ import { useAdminControl } from '../hooks/useAdminControl.jsx';
 import { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import useAppStore from '../store/appStore';
 
 export default function HomePage() {
     const adminControls = useAdminControl({
@@ -14,10 +15,12 @@ export default function HomePage() {
         textAbout: "",
         goToTips: ""
     }, "home");
-    const { draft, updateDraft, editMode, previewMode } = adminControls;
+    const { draft, updateDraft, editMode } = adminControls;
+    const setClubOpen = useAppStore(state => state.setClubOpen);
     const Navigate = useNavigate();
 
     useEffect(() => {
+        setClubOpen(true);
         axios.get("http://localhost:4000/api/page/home").then((res) => {
             const data = res.data;
             if (typeof data.products === "string") {
