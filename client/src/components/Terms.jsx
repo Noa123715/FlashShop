@@ -4,7 +4,7 @@ import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import useAuthStore from '../store/authStore';
 
-export default function TermsModal() {
+export default function Terms() {
     const isAdmin = useAuthStore(state => state.isAdmin());
     const adminControls = useAdminControl(
         { title: "", content: "", btnText: "" },

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTipsStore } from "../store/tipsStore.js";
 import { getAllTips } from '../api/pages.js';
-import useAuthStore from '../store/authStore';
+import useAuthStore from '../store/authStore.js';
 
 const saveTipChanges = async (tipId, updatedData) => {
     try {
@@ -15,7 +15,7 @@ const saveTipChanges = async (tipId, updatedData) => {
     }
 };
 
-export default function Blog() {
+export default function BlogPage() {
     const isAdmin = useAuthStore(state => state.isAdmin());
     const { currentTip, setCurrentTip, tipsList, setTipsList, updateTipInList } = useTipsStore();
     const [editMode, setEditMode] = useState(false);

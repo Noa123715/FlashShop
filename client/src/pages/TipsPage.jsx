@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { useTipsStore } from "../store/tipsStore.js";
 import useAuthStore from "../store/authStore.js";
 
-export default function Tips() {
+export default function TipsPage() {
     const TIPS_PER_PAGE = 9;
     const isAdmin = useAuthStore(state => state.isAdmin());
     const adminControls = useAdminControl({ title: "", img: "" }, "tips");
