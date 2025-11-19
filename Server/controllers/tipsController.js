@@ -2,7 +2,6 @@ const { TipsModel } = require("../models/tipsModel");
 
 exports.getAllTips = async (req, res) => {
   try {
-    console.log("hello!!!!! the error is here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 9;
     const skip = (page - 1) * limit;

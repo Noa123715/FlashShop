@@ -1,18 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
-import axios from "axios";
-import { getAllTips } from '../api/pages.js';
 import AdminControls from "../components/AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import { Link } from "react-router-dom";
 import { useTipsStore } from "../store/tipsStore.js";
 import useAuthStore from "../store/authStore.js";
+import { getPage } from '../api/pages';
+import { getAllTips, createTip } from '../api/tips';
 
-export default function Tips() {
+export default function TipsPage() {
     const TIPS_PER_PAGE = 9;
     const isAdmin = useAuthStore(state => state.isAdmin());
     const adminControls = useAdminControl({ title: "", img: "" }, "tips");
     const { currentTip, setCurrentTip, tipsList, setTipsList } = useTipsStore();
-    const { draft, updateDraft, editMode, previewMode } = adminControls;
+    const { draft, updateDraft, editMode } = adminControls;
     const [editModeTip, setEditModeTip] = useState(false);
     const [tipDraft, setTipDraft] = useState({
         title: "",
@@ -24,31 +24,22 @@ export default function Tips() {
     const [totalTipsCount, setTotalTipsCount] = useState(0);
 
     useEffect(() => {
-        axios.get("http://localhost:4000/api/page/tips").then((res) => {
-            adminControls.setPage(res.data);
-            adminControls.setDraft(res.data);
+        getPage("tips").then((data) => {
+            adminControls.setPage(data);
+            adminControls.setDraft(data);
         }).catch(error => console.error("Error fetching main tips page data:", error));
     }, []);
+
     useEffect(() => {
-        const skip = (currentPage - 1) * TIPS_PER_PAGE;
-        axios.get(`http://localhost:5000/tips`, {
-            params: {
-                page: currentPage,
-                limit: TIPS_PER_PAGE,
-                sortBy: 'createdAt',
-                order: 'desc'
-            }
-        }).then((response) => {
-            const { tips, totalCount } = response.data;
+        getAllTips(currentPage, TIPS_PER_PAGE).then((data) => {
+            const { tips, totalCount } = data;
             useTipsStore.getState().setTipsList(tips);
             setTotalTipsCount(totalCount);
         }).catch((error) => {
             console.error("Error fetching tips list:", error);
             useTipsStore.getState().setTipsList([]);
         });
-
     }, [currentPage]);
-
 
     const enterEditMode = () => {
         if (!isAdmin) {
@@ -63,8 +54,7 @@ export default function Tips() {
         if (!isAdmin || !tipDraft) return;
 
         try {
-            const response = await axios.post(`http://localhost:5000/tips`, tipDraft);
-            const addTip = response.data;
+            const addTip = await createTip(tipDraft);
             useTipsStore.getState().setTipsList([...tipsList, addTip]);
             setCurrentTip({});
             setEditModeTip(false);

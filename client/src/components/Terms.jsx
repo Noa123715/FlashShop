@@ -1,28 +1,29 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { getPage } from "../api/pages";
 import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import useAuthStore from '../store/authStore';
+import useAppStore from '../store/appStore';
 
-export default function TermsModal() {
+export default function Terms() {
     const isAdmin = useAuthStore(state => state.isAdmin());
     const adminControls = useAdminControl(
         { title: "", content: "", btnText: "" },
         "terms"
     );
     const { draft, updateDraft, editMode, previewMode } = adminControls;
-    
     const [isOpen, setIsOpen] = useState(true);
+    const setTermsAgreed = useAppStore(state => state.setTermsAgreed);
 
     useEffect(() => {
-        axios.get("http://localhost:4000/api/page/terms").then((res) => {
-            adminControls.setPage(res.data);
-            adminControls.setDraft(res.data);
+        getPage("terms").then((data) => {
+            adminControls.setPage(data);
+            adminControls.setDraft(data);
         });
     }, []);
 
     const handleAgree = () => {
-        localStorage.setItem("termsAgreed", "true");
+        setTermsAgreed(true);
         setIsOpen(false);
     };
 
@@ -90,3 +91,12 @@ export default function TermsModal() {
         </div>
     );
 }
+
+// import useAppStore from '../store/appStore';
+
+// // בתוך קומפוננטה:
+// const termsAgreed = useAppStore(state => state.termsAgreed);
+
+// if (termsAgreed) {
+//     // בצע פעולה...
+// }

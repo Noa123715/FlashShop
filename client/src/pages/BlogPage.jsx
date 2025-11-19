@@ -1,41 +1,24 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { getAllTips, updateTip } from '../api/tips.js';
 import { useTipsStore } from "../store/tipsStore.js";
-import { getAllTips } from '../api/pages.js';
-import useAuthStore from '../store/authStore';
+import useAuthStore from '../store/authStore.js';
 
-const saveTipChanges = async (tipId, updatedData) => {
-    try {
-        const response = await axios.put(`http://localhost:5000/tips/${tipId}`, updatedData);
-        return response.data;
-
-    } catch (error) {
-        console.error("Error saving tip changes:", error);
-        throw new Error("שמירת השינויים נכשלה.");
-    }
-};
-
-export default function Blog() {
+export default function BlogPage() {
     const isAdmin = useAuthStore(state => state.isAdmin());
     const { currentTip, setCurrentTip, tipsList, setTipsList, updateTipInList } = useTipsStore();
     const [editMode, setEditMode] = useState(false);
     const [draft, setDraft] = useState({});
 
-    useEffect(() => {
-        const handleStorageChange = () => {
-        };
-        window.addEventListener('storage', handleStorageChange);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
+    const index = currentTip ? tipsList.findIndex(t => t._id === currentTip._id) : -1;
+    const prevTip = index > 0 ? tipsList[index - 1] : null;
+    const nextTip = (index >= 0 && index < tipsList.length - 1) ? tipsList[index + 1] : null;
+    const displayData = editMode ? draft : currentTip;
 
     useEffect(() => {
         if (!tipsList || tipsList.length === 0) {
-            getAllTips().then((response) => {
-                console.log("Tips data:", response.data);
-                useTipsStore.getState().setTipsList(response.data);
+            getAllTips().then((data) => {
+                const tips = data.tips || data;
+                useTipsStore.getState().setTipsList(tips);
             }).catch((error) => {
                 console.error("Error fetching tips list:", error);
             });
@@ -45,6 +28,7 @@ export default function Blog() {
             }
         }
     }, [currentTip, tipsList, setCurrentTip]);
+
     useEffect(() => {
         if (currentTip && !editMode) {
             setDraft({
@@ -55,10 +39,6 @@ export default function Blog() {
             });
         }
     }, [currentTip, editMode]);
-
-    const index = currentTip ? tipsList.findIndex(t => t._id === currentTip._id) : -1;
-    const prevTip = index > 0 ? tipsList[index - 1] : null;
-    const nextTip = (index >= 0 && index < tipsList.length - 1) ? tipsList[index + 1] : null;
 
     const enterEditMode = () => {
         if (!isAdmin) {
@@ -80,9 +60,9 @@ export default function Blog() {
         if (!isAdmin || !currentTip) return;
 
         try {
-            const updatedTip = await saveTipChanges(currentTip._id, draft);
-            setCurrentTip(updatedTip);
-            if (updateTipInList) updateTipInList(updatedTip);
+            const updatedTipData = await updateTip(currentTip._id, draft);
+            setCurrentTip(updatedTipData);
+            if (updateTipInList) updateTipInList(updatedTipData);
             setEditMode(false);
         } catch (error) {
             alert(error.message);
@@ -100,8 +80,6 @@ export default function Blog() {
     };
 
     if (!currentTip) return <p className="text-center p-12">טוען נתונים...</p>;
-
-    const displayData = editMode ? draft : currentTip;
 
     return (
         <div className="container mx-auto px-4 py-12 min-h-screen">
