@@ -4,7 +4,7 @@ import AdminControls from "./AdminControls";
 import { useAdminControl } from "../hooks/useAdminControl";
 
 export default function Header() {
-    const adminControls = useAdminControl({ logo: "" }, "header");
+    const adminControls = useAdminControl({ logo: null }, "header");
     const { draft, updateDraft, editMode } = adminControls;
 
     useEffect(() => {
