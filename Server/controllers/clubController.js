@@ -1,5 +1,6 @@
 const { ClubModel } = require("../models/clubModel");
 const crypto = require("crypto");
+const { sendEmail } = require("../utils/sendEmail");
 
 const generateGiftCode = () => {
     const randomPart = crypto.randomBytes(3).toString('hex').toUpperCase();
@@ -8,9 +9,7 @@ const generateGiftCode = () => {
 
 exports.joinClub = async (req, res) => {
     try {
-        console.log("hello i'm here!");
         const { user_id, email, name, birthDate } = req.body;
-        console.log("that is the body: " + req.body);
         const existingMember = await ClubModel.findOne({ user_id });
         if (existingMember) {
             console.log("i'm here?");
@@ -19,9 +18,7 @@ exports.joinClub = async (req, res) => {
                 code: existingMember.giftCode
             });
         }
-        console.log("existingMember" + existingMember);
         const newCode = generateGiftCode();
-        console.log("new code: " + newCode);
         const newMember = new ClubModel({
             user_id,
             email,
@@ -31,10 +28,19 @@ exports.joinClub = async (req, res) => {
             isUsed: false
         });
         await newMember.save();
-        console.log("so its ok?");
+        try {
+            await sendEmail(
+                email,
+                "ברוכים הבאים למועדון! 🎁",
+                { name: name, code: newCode },
+                "./template/clubWelcome.handlebars"
+            );
+            console.log("Welcome email sent to " + email);
+        } catch (emailErr) {
+            console.error("Failed to send welcome email:", emailErr);
+        }
         res.status(201).json({ msg: "הצטרפת בהצלחה!", code: newCode });
     } catch (err) {
-        console.log(err);
         res.status(500).json({ msg: "שגיאה בהצטרפות", err });
     }
 };
