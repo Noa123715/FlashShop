@@ -35,11 +35,8 @@ export default function LoginPage() {
     setErrors({});
     signIn(email, password)
       .then((response) => {
-        console.log("here")
         const { user } = response.data;
-        console.log("user " + user);
         login(user);
-        console.log("success?");
         Navigate('/home');
       })
       .catch((error) => {

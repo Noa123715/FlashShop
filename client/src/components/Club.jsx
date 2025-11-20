@@ -3,9 +3,12 @@ import { getPage } from "../api/pages";
 import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
 import useAppStore from '../store/appStore';
+import useAuthStore from '../store/authStore.js'
+import { joinClubRequest } from "../api/club";
 
 export default function Club() {
     const { isClubOpen, setClubOpen, setTermsOpen, termsAgreed } = useAppStore();
+    const userId = useAuthStore(state => state.userId);
     const adminControls = useAdminControl(
         {
             title: "",
@@ -49,15 +52,34 @@ export default function Club() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.agreed) {
             alert("יש לאשר את התקנון");
             return;
         }
-        console.log("Club registration:", formData);
-        alert("תודה שהצטרפת!");
-        setClubOpen(false);
+        if (!userId) {
+            alert("עליך להתחבר לאתר כדי להצטרף למועדון");
+            return;
+        }
+        try {
+            const payload = {
+                user_id: userId,
+                email: formData.email,
+                name: formData.name,
+                birthDate: formData.birthdate
+            };
+            console.log("payload: " + payload);
+            const data = await joinClubRequest(payload);
+            alert(`${data.msg}\nקוד ההטבה שלך הוא: ${data.code}`);
+            setClubOpen(false);
+        } catch (error) {
+            console.log("error: " + error);
+            console.log("msg: " + error.response?.data?.msg);
+            console.error("Club join error:", error);
+            const errorMsg = error.response?.data?.msg || "אירעה שגיאה בהצטרפות למועדון";
+            alert(errorMsg);
+        }
     };
 
     const openTerms = (e) => {
@@ -98,7 +120,7 @@ export default function Club() {
         </div>
     );
 
-    const InnerViewContent = (
+    const ViewContent = (
         <div className="relative w-[500px] h-[500px] flex items-center justify-center animate-fade-in-up">
             <button
                 onClick={() => setClubOpen(false)}
@@ -149,7 +171,7 @@ export default function Club() {
                     previewContent={EditContent}
                     adminControls={adminControls}
                 >
-                    {InnerViewContent}
+                    {ViewContent}
                 </AdminControls>
             </div>
         </div>

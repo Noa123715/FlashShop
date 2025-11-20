@@ -8,24 +8,30 @@ const generateGiftCode = () => {
 
 exports.joinClub = async (req, res) => {
     try {
+        console.log("hello i'm here!");
         const { user_id, email, name, birthDate } = req.body;
+        console.log("that is the body: " + req.body);
         const existingMember = await ClubModel.findOne({ user_id });
         if (existingMember) {
+            console.log("i'm here?");
             return res.status(200).json({
                 msg: "אתה כבר חבר מועדון",
-                code: existingMember.personalCode
+                code: existingMember.giftCode
             });
         }
+        console.log("existingMember" + existingMember);
         const newCode = generateGiftCode();
+        console.log("new code: " + newCode);
         const newMember = new ClubModel({
             user_id,
             email,
             name,
             birthDate,
-            personalCode: newCode,
+            giftCode: newCode,
             isUsed: false
         });
         await newMember.save();
+        console.log("so its ok?");
         res.status(201).json({ msg: "הצטרפת בהצלחה!", code: newCode });
     } catch (err) {
         console.log(err);
