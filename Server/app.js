@@ -4,6 +4,7 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/ordersRoutes");
 const tipsRoutes = require("./routes/tipsRoutes.js");
+const clubRoutes = require("./routes/clubRoutes");
 require("./db/mongoConnection");
 const { config } = require("./config/secret")
 const PORT = config.PORT;
@@ -22,6 +23,7 @@ app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
 app.use("/tips", tipsRoutes);
+app.use("/club", clubRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://${HOST_NAME}:${PORT}`);

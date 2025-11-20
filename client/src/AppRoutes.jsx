@@ -21,7 +21,6 @@ export default function AppRoutes() {
                 <Route path="/tips/*" element={<Layout><BlogPage /></Layout>} />
                 <Route path="/terms" element={<Layout> <Terms /> </Layout>} />
                 <Route path="/tips" element={<Layout> <TipsPage /> </Layout>} />
-
                 {/* Redirect to home */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
