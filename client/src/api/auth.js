@@ -31,5 +31,5 @@ export const resetPassword = async (token, newPassword) => {
         token,
         newPassword
     });
-    return response;
+return response;
 };

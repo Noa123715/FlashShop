@@ -70,10 +70,14 @@ export default function SignUpPage() {
     };
 
 
-    const handleSocialSignUp = (provider) => {
-        //add sign up with google
 
-       
+    const handleSocialSignUp = (providerName) => {
+        // Social sign-up not configured yet. Keep behavior consistent with LoginPage.
+        // Options to implement:
+        // 1. Wire Firebase client SDK (install `firebase`, add config, import auth + providers).
+        // 2. Use server-side OAuth flow and redirect to backend endpoints.
+        // For now show a friendly placeholder so the UI doesn't throw due to missing variables.
+        alert(`${providerName} signup coming soon!`);
     };
 
     return (
