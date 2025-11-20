@@ -1,13 +1,23 @@
 import { Link } from 'react-router-dom';
 import { FaDownload } from 'react-icons/fa';
 import useAppStore from '../store/appStore';
+import useAuthStore from '../store/authStore';
 
 export default function NavBar() {
     const setClubOpen = useAppStore(state => state.setClubOpen);
+    const isAdmin = useAuthStore(state => state.isAdmin());
+    console.log("isAdmin: " + isAdmin);
 
     return (
         <nav className="w-full bg-white shadow-sm" aria-label="תפריט ראשי">
             <ul dir="rtl" className="flex justify-start items-center gap-6 p-4">
+                {isAdmin &&
+                    <li>
+                        <Link to="/admindashboard" className="hover:underline">
+                            ניהול מערכת
+                        </Link>
+                    </li>
+                }
                 <li>
                     <Link to="/home" className="hover:underline">
                         מוצרים

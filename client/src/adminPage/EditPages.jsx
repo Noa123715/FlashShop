@@ -1,0 +1,131 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { FaHome, FaLightbulb, FaScroll, FaGift, FaWindowMaximize, FaWindowMinimize, FaMagic } from 'react-icons/fa';
+import useAuthStore from '../store/authStore';
+
+export default function EditPages() {
+    const isAdmin = useAuthStore(state => state.isAdmin());
+
+    if (!isAdmin) {
+        return (
+            <div className="min-h-screen flex items-center justify-center text-2xl font-bold text-gray-600" dir="rtl">
+                אין לך הרשאה לצפות בדף זה.
+            </div>
+        );
+    }
+
+    // רשימת הדפים והרכיבים לעריכה
+    // אנו שולחים ב-state את המזהה (endpoint) של הרכיב כדי שרק הוא ייכנס למצב עריכה
+    const pagesToEdit = [
+        {
+            id: 1,
+            title: "עריכת דף הבית",
+            description: "שינוי הטקסטים, תמונת הרקע הראשית ומוצרים מקודמים בדף הכניסה.",
+            icon: <FaHome className="text-3xl text-white" />,
+            link: "/",
+            targetEndpoint: "home"
+        },
+        {
+            id: 2,
+            title: "עריכת כותרת (Header)",
+            description: "עדכון הלוגו והתפריט העליון המופיעים בכל דפי האתר.",
+            icon: <FaWindowMaximize className="text-3xl text-white" />,
+            link: "/", // הכותרת נמצאת בכל דף, אז נפנה לדף הבית
+            targetEndpoint: "header"
+        },
+        {
+            id: 3,
+            title: "עריכת פוטר (Footer)",
+            description: "עדכון פרטי יצירת קשר, זכויות יוצרים וקישורים בתחתית האתר.",
+            icon: <FaWindowMinimize className="text-3xl text-white" />,
+            link: "/", // הפוטר נמצא בכל דף
+            targetEndpoint: "footer"
+        },
+        {
+            id: 4,
+            title: "עריכת עמוד טיפים",
+            description: "ניהול הכותרת והתמונה הראשית של עמוד הטיפים.",
+            icon: <FaLightbulb className="text-3xl text-white" />,
+            link: "/tips",
+            targetEndpoint: "tips"
+        },
+        {
+            id: 5,
+            title: "עריכת תקנון",
+            description: "עדכון הטקסט המשפטי ותנאי השימוש באתר.",
+            icon: <FaScroll className="text-3xl text-white" />,
+            link: "/terms",
+            targetEndpoint: "terms"
+        },
+        {
+            id: 6,
+            title: "עריכת פופ-אפ מועדון",
+            description: "שינוי הטקסט והעיצוב של חלונית ההצטרפות למועדון הלקוחות.",
+            icon: <FaGift className="text-3xl text-white" />,
+            link: "/", // המועדון זמין בכל מקום
+            targetEndpoint: "club"
+        },
+    ];
+
+    return (
+        <div className="min-h-screen bg-gray-50 pb-20 font-sans" dir="rtl">
+
+            {/* Header Section */}
+            <div className="bg-white shadow-sm border-b border-gray-100 mb-10">
+                <div className="container mx-auto px-6 py-10">
+                    <div className="flex items-center gap-5">
+                        <div className="p-4 bg-[#f2665e] rounded-full shadow-lg shadow-red-200">
+                            <FaMagic className="text-2xl text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-extrabold text-gray-800">ניהול דפים ותוכן</h1>
+                            <p className="text-gray-500 mt-1 text-lg">בחרי איזה דף או רכיב ברצונך לערוך, והמערכת תעביר אותך ישירות למצב עריכה.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Cards Grid */}
+            <div className="container mx-auto px-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {pagesToEdit.map((page) => (
+                        <Link
+                            to={page.link}
+                            state={{ autoEdit: true, targetEndpoint: page.targetEndpoint }} // כאן הקסם קורה! שולחים State
+                            key={page.id}
+                            className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-2 flex flex-col"
+                        >
+                            {/* Card Header */}
+                            <div className="h-36 relative overflow-hidden bg-gradient-to-br from-[#f2665e] to-[#d95248] flex items-center justify-center">
+                                <div className="absolute top-0 left-0 w-full h-full opacity-10">
+                                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                        <path d="M0 100 C 20 0 50 0 100 100 Z" fill="white" />
+                                    </svg>
+                                </div>
+                                <div className="relative z-10 p-4 bg-white/20 backdrop-blur-sm rounded-2xl shadow-inner group-hover:scale-110 transition-transform duration-300 border border-white/30">
+                                    {page.icon}
+                                </div>
+                            </div>
+
+                            {/* Card Content */}
+                            <div className="p-8 flex-1 flex flex-col items-center text-center">
+                                <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-[#f2665e] transition-colors">
+                                    {page.title}
+                                </h3>
+                                <p className="text-gray-600 leading-relaxed text-sm">
+                                    {page.description}
+                                </p>
+
+                                <div className="mt-auto pt-6 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                                    <span className="text-[#f2665e] font-bold text-sm flex items-center gap-2">
+                                        עבור לעריכה &larr;
+                                    </span>
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
