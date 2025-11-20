@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { getPage } from "../api/pages";
 import AdminControls from "./AdminControls.jsx";
 import { useAdminControl } from "../hooks/useAdminControl.jsx";
-import useAuthStore from '../store/authStore';
 import useAppStore from '../store/appStore';
 
 export default function Club() {
-    const isAdmin = useAuthStore(state => state.isAdmin());
     const { isClubOpen, setClubOpen, setTermsOpen, termsAgreed } = useAppStore();
     const adminControls = useAdminControl(
         {
