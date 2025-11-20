@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import TipsPage from "./pages/TipsPage";
 import SignUpPage from "./pages/SignUpPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 export default function AppRoutes() {
     return (
@@ -21,6 +22,8 @@ export default function AppRoutes() {
                 <Route path="/tips/*" element={<Layout><BlogPage /></Layout>} />
                 <Route path="/terms" element={<Layout> <Terms /> </Layout>} />
                 <Route path="/tips" element={<Layout> <TipsPage /> </Layout>} />
+                {/* only the admin can navigate to this dashboard */}
+                <Route path="/admindashboard" element={<Layout> <AdminDashboardPage /> </Layout>} />
                 {/* Redirect to home */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
