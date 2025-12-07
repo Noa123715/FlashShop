@@ -9,28 +9,7 @@ import { checkCouponRequest } from "../api/club";
 import AdminControls from "../components/AdminControls";
 import { useAdminControl } from "../hooks/useAdminControl";
 import { getPage } from "../api/pages";
-
-const RECOMMENDED_PRODUCTS = [
-  {
-    id: 3,
-    name: "חולצה",
-    price: 45.9,
-    image: "https://c.animaapp.com/ssXwMPGd/img/shirt@2x.png",
-  },
-  {
-    id: 2,
-    name: "קנבס",
-    price: 45.9,
-    image: "https://c.animaapp.com/ssXwMPGd/img/canvas@2x.png",
-  },
-  {
-    id: 1,
-    name: "שעון קיר",
-    price: 45.9,
-    image:
-      "https://c.animaapp.com/ssXwMPGd/img/wall-clock-mockup-right-view@2x.png",
-  },
-];
+import { getProducts } from "../api/products";
 
 export default function ShoppingCartPage() {
   const cartItems = useCartStore((state) => state.cartItems);
