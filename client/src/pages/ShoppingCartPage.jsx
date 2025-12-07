@@ -1,45 +1,58 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CartItem from "../components/CartItem";
 import CartSummary from "../components/CartSummary";
 import RecommendedProduct from "../components/RecommendedProduct";
 import { useCartStore } from "../store/cartStore";
-import useAuthStore from "../store/authStore"; // 2. Import Auth Store
+import useAuthStore from "../store/authStore";
 import { checkCouponRequest } from "../api/club";
-
-const RECOMMENDED_PRODUCTS = [
-  {
-    id: 3,
-    name: "חולצה",
-    price: 45.9,
-    image: "https://c.animaapp.com/ssXwMPGd/img/shirt@2x.png",
-  },
-  {
-    id: 2,
-    name: "קנבס",
-    price: 45.9,
-    image: "https://c.animaapp.com/ssXwMPGd/img/canvas@2x.png",
-  },
-  {
-    id: 1,
-    name: "שעון קיר",
-    price: 45.9,
-    image:
-      "https://c.animaapp.com/ssXwMPGd/img/wall-clock-mockup-right-view@2x.png",
-  },
-];
+import { getProducts } from "../api/products";
 
 export default function ShoppingCartPage() {
   const cartItems = useCartStore((state) => state.cartItems);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const addToCart = useCartStore((state) => state.addToCart); // Get addToCart action
   
-  // 3. Get Auth state and navigate function
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const navigate = useNavigate();
 
   const [discount, setDiscount] = useState(0); 
   const [appliedCoupon, setAppliedCoupon] = useState("");
-  const [recommendedProducts] = useState(RECOMMENDED_PRODUCTS);
+  
+  const [allProducts, setAllProducts] = useState([]); // Store all DB products
+  const [recommendedProducts, setRecommendedProducts] = useState([]); // Store currently displayed
+
+  // 1. Fetch products from DB on mount
+  useEffect(() => {
+    getProducts().then((data) => {
+      setAllProducts(data);
+      setRecommendedProducts(getRandomProducts(data, 3));
+    }).catch(err => console.error("Failed to load products:", err));
+  }, []);
+
+  // Helper to pick n random products
+  const getRandomProducts = (productsList, count) => {
+    if (!productsList || productsList.length === 0) return [];
+    // Create a shallow copy and shuffle
+    const shuffled = [...productsList].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  };
+
+  // 2. Handle adding a recommended product to cart
+  const handleAddToCartRecommended = (product) => {
+    const newItem = {
+      id: product._id, // Use DB _id
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1,
+    };
+
+    addToCart([newItem]); // Add to store
+    
+    // 3. Change the recommendations after adding
+    setRecommendedProducts(getRandomProducts(allProducts, 3));
+  };
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -59,16 +72,13 @@ export default function ShoppingCartPage() {
         return;
     }
 
-    // 4. Check if logged in
     if (!isAuthenticated) {
-        // Redirect to login, but remember we came from '/cart'
         if (confirm("עליך להתחבר כדי להמשיך לתשלום. לעבור להתחברות?")) {
             navigate('/login', { state: { from: '/cart' } });
         }
         return;
     }
 
-    // Proceed to checkout logic
     console.log("Proceeding to checkout...", { 
         items: cartItems, 
         total: totalPrice, 
@@ -174,11 +184,19 @@ export default function ShoppingCartPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center text-[#f2665e] mb-8">
             אולי תאהבו גם את אלה...
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {recommendedProducts.map((product) => (
-              <RecommendedProduct key={product.id} product={product} />
-            ))}
-          </div>
+          {recommendedProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {recommendedProducts.map((product) => (
+                <RecommendedProduct 
+                    key={product._id} 
+                    product={product} 
+                    onAddToCart={handleAddToCartRecommended} 
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">טוען מוצרים מומלצים...</p>
+          )}
         </section>
       </div>
     </div>
