@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '../components/Hero';
 import Gallery from '../components/Gallery';
 import { useCartStore } from '../store/cartStore';
 import axios from 'axios';
+import AdminControls from '../components/AdminControls';
+import { useAdminControl } from '../hooks/useAdminControl';
+import { getPage } from '../api/pages';
 
 const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
     const [images, setImages] = useState([]);
@@ -12,8 +15,20 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
     const addToCart = useCartStore((state) => state.addToCart);
     const navigate = useNavigate();
 
+    const adminControls = useAdminControl({
+        img: "",
+        title: "",
+        subtitle: "",
+        btnText: "",
+    }, "photos");
+    const { draft, updateDraft, editMode } = adminControls;
+
     // 1. Fetch prices from the Server on load
     useEffect(() => {
+        getPage("photos").then((data) => {
+            adminControls.setPage(data);
+            adminControls.setDraft(data);
+        }).catch(error => console.error("Error fetching main photos page data:", error));
         const fetchPrices = async () => {
             try {
                 const { data } = await axios.get('http://localhost:5000/photo-prices');
@@ -145,25 +160,62 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-white relative">
-            {/* Loading Overlay */}
-            {isUploading && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center text-white backdrop-blur-sm">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white mb-4"></div>
-                    <h2 className="text-xl font-bold">מעלה תמונות...</h2>
-                    <p>אנא המתן, זה עשוי לקחת מספר רגעים</p>
-                </div>
-            )}
+    const EditContent = (
+        <div className="bg-white p-6 rounded-lg space-y-4 text-right" dir="rtl">
+            <h3 className="font-bold text-lg border-b pb-2">עריכת עמוד פיתוח תמונות</h3>
 
+            <div>
+                <label className="block text-sm font-bold text-gray-700">תמונת רקע עליונה (URL):</label>
+                <input
+                    type="text"
+                    value={draft.img}
+                    onChange={(e) => updateDraft({ img: e.target.value })}
+                    className="w-full border p-2 rounded ltr"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-bold text-gray-700">כותרת ראשית:</label>
+                <input
+                    type="text"
+                    value={draft.title}
+                    onChange={(e) => updateDraft({ title: e.target.value })}
+                    className="w-full border p-2 rounded"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-bold text-gray-700">כותרת משנית:</label>
+                <textarea
+                    value={draft.subtitle}
+                    onChange={(e) => updateDraft({ subtitle: e.target.value })}
+                    className="w-full border p-2 rounded h-20"
+                />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-bold text-gray-700">טקסט כפתור ראשי:</label>
+                    <input
+                        type="text"
+                        value={draft.btnText}
+                        onChange={(e) => updateDraft({ btnText: e.target.value })}
+                        className="w-full border p-2 rounded"
+                    />
+                </div>
+            </div>
+        </div>
+    );
+
+    const ViewContent = (
+        <div className="min-h-screen bg-white">
             <Hero
                 onStartEditor={onNavigateToEditor}
                 onFilesSelected={handleFilesSelected}
-                backgroundImage="https://res.cloudinary.com/dwqywo11u/image/upload/v1764668010/a3b33323-3745-44b6-a4c0-a6749513d957.png"
-                title="גרירת תמונות לכאן"
-                subtitle="צור מתנות מרגשות עם התמונות שאתה אוהב" 
-                primaryButtonText="בחירת קבצים"
-                secondaryButtonText=""
+                backgroundImage={draft.img}
+                title={draft.title}
+                subtitle={draft.subtitle}
+                btnText={draft.btnText}
             />
             <Gallery
                 images={images}
@@ -171,9 +223,19 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
                 onRemove={handleRemove}
                 onSizeChange={handleSizeChange}
                 onSendOrder={handleSendOrder}
-                availableSizes={priceList} 
+                availableSizes={priceList}
             />
         </div>
+    );
+
+    return (
+        <AdminControls
+            editMode={editMode}
+            previewContent={EditContent}
+            adminControls={adminControls}
+        >
+            {ViewContent}
+        </AdminControls>
     );
 };
 
