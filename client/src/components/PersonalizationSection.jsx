@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SparklesIcon } from './icons';
-import { getProducts } from '../api/products'; // Import API function
+import { getProducts } from '../api/products'; 
 
 const PersonalizationSection = ({ onNavigateToEditor, onSelectProduct, selectedProduct }) => {
     const [products, setProducts] = useState([]);
