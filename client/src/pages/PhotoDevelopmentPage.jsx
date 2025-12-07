@@ -7,7 +7,8 @@ import axios from 'axios';
 
 const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
     const [images, setImages] = useState([]);
-    const [priceList, setPriceList] = useState([]); // Store prices from DB
+    const [priceList, setPriceList] = useState([]);
+    const [isUploading, setIsUploading] = useState(false); // New state for loading
     const addToCart = useCartStore((state) => state.addToCart);
     const navigate = useNavigate();
 
@@ -15,13 +16,10 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
     useEffect(() => {
         const fetchPrices = async () => {
             try {
-                // Ensure this URL matches your server port (5000 or 4000)
                 const { data } = await axios.get('http://localhost:5000/photo-prices');
-
                 setPriceList(data);
             } catch (err) {
                 console.error("Failed to load prices from DB:", err);
-                // Fallback to empty list (component will use default logic)
                 setPriceList([]);
             }
         };
@@ -32,9 +30,8 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
     const getPriceBySize = (size) => {
         if (priceList.length > 0) {
             const found = priceList.find(p => p.size === size);
-            return found ? found.price : 1.20; // DB Price or Fallback
+            return found ? found.price : 1.20;
         }
-        // Hardcoded fallback if DB fails
         switch (size) {
             case '13x18': return 1.50;
             case '20x30': return 2.50;
@@ -42,12 +39,10 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
         }
     };
 
-    // 3. Upload Logic
+    // 3. Upload Logic (Used later in handleSendOrder)
     const uploadImage = async (file) => {
         const formData = new FormData();
         formData.append("file", file);
-
-
         formData.append("upload_preset", "ml_default");
 
         try {
@@ -70,25 +65,21 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
         }
     };
 
-    const handleFilesSelected = async (files) => {
-        // Determine default size from DB or hardcode
+    // Modified: Only creates local preview, does NOT upload yet
+    const handleFilesSelected = (files) => {
         const defaultSize = priceList.length > 0 ? priceList[0].size : '10x15';
 
-        const newImagesPromises = Array.from(files).map(async (file) => {
-            const secureUrl = await uploadImage(file);
-            if (secureUrl) {
-                return {
-                    id: Date.now() + Math.random(),
-                    src: secureUrl,
-                    alt: file.name,
-                    quantity: 1,
-                    size: defaultSize
-                };
-            }
-            return null;
+        const newImages = Array.from(files).map((file) => {
+            return {
+                id: Date.now() + Math.random(),
+                src: URL.createObjectURL(file), // Local preview URL
+                file: file, // Store the actual file for later upload
+                alt: file.name,
+                quantity: 1,
+                size: defaultSize
+            };
         });
 
-        const newImages = (await Promise.all(newImagesPromises)).filter(img => img !== null);
         setImages(prev => [...prev, ...newImages]);
     };
 
@@ -109,29 +100,62 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
         ));
     };
 
-    // 5. Checkout Logic
-    const handleSendOrder = () => {
+    // 5. Checkout Logic - Uploads images here
+    const handleSendOrder = async () => {
+        setIsUploading(true);
         const defaultSize = priceList.length > 0 ? priceList[0].size : '10x15';
 
-        const cartItems = images.map(img => {
-            const size = img.size || defaultSize;
-            return {
-                id: img.id,
-                size: size,
-                // Include size in name for clarity in simple cart views
-                name: `פיתוח תמונה ${size} (${img.alt})`,
-                price: getPriceBySize(size),
-                quantity: img.quantity,
-                image: img.src
-            };
-        });
+        try {
+            // Process all images in parallel
+            const cartItemsPromises = images.map(async (img) => {
+                let imageUrl = img.src;
 
-        addToCart(cartItems);
-        navigate('/cart');
+                // If it's a local file, upload it now
+                if (img.file) {
+                    const uploadedUrl = await uploadImage(img.file);
+                    if (uploadedUrl) {
+                        imageUrl = uploadedUrl;
+                    } else {
+                        console.error(`Failed to upload ${img.alt}`);
+                        // You might want to handle this error gracefully (e.g. skip item or alert user)
+                    }
+                }
+
+                const size = img.size || defaultSize;
+                return {
+                    id: img.id,
+                    size: size,
+                    name: `פיתוח תמונה ${size} (${img.alt})`,
+                    price: getPriceBySize(size),
+                    quantity: img.quantity,
+                    image: imageUrl
+                };
+            });
+
+            // Wait for all uploads to finish
+            const cartItems = await Promise.all(cartItemsPromises);
+
+            addToCart(cartItems);
+            navigate('/cart');
+        } catch (error) {
+            console.error("Error processing order:", error);
+            alert("אירעה שגיאה בהעלאת התמונות. אנא נסה שוב.");
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white relative">
+            {/* Loading Overlay */}
+            {isUploading && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center text-white backdrop-blur-sm">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white mb-4"></div>
+                    <h2 className="text-xl font-bold">מעלה תמונות...</h2>
+                    <p>אנא המתן, זה עשוי לקחת מספר רגעים</p>
+                </div>
+            )}
+
             <Hero
                 onStartEditor={onNavigateToEditor}
                 onFilesSelected={handleFilesSelected}
@@ -147,7 +171,7 @@ const PhotoDevelopmentPage = ({ onNavigate, onNavigateToEditor }) => {
                 onRemove={handleRemove}
                 onSizeChange={handleSizeChange}
                 onSendOrder={handleSendOrder}
-                availableSizes={priceList} // Pass DB sizes to Gallery -> ImageCard
+                availableSizes={priceList} 
             />
         </div>
     );
