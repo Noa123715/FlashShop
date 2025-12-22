@@ -1,8 +1,11 @@
 import cors from "cors";
 import express from "express";
 import pageRoutes from "./routes/pageRoutes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
+
+app.use(cookieParser());
 const PORT = process.env.PORT;
 const HOST_NAME = process.env.HOST_NAME;
 
