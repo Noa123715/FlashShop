@@ -29,6 +29,9 @@ export default function Footer() {
     });
     const [sending, setSending] = useState(false);
     const [statusMsg, setStatusMsg] = useState(null);
+    
+    // מצב חדש לשליטה על הצגת הטופס במובייל
+    const [showMobileForm, setShowMobileForm] = useState(false);
 
     const handleContactFormChange = (field, value) => {
         setContactForm((prev) => ({ ...prev, [field]: value }));
@@ -50,10 +53,12 @@ export default function Footer() {
             setSending(true);
             setStatusMsg(null);
             const res = await sendMessageRequest(contactForm)
-
-            if (res.ok === 200 || res.ok === 201 || res.msg) { // התאמה לתשובת שרת גמישה
+            console.log(res)
+            if (res.ok ) {
                 setStatusMsg({ type: 'success', text: 'ההודעה נשלחה בהצלחה. תודה!' });
                 setContactForm({ name: '', email: '', message: '' });
+                // סגירת הטופס במובייל לאחר שליחה מוצלחת (אופציונלי)
+                setTimeout(() => setShowMobileForm(false), 2000);
             } else {
                 setStatusMsg({ type: 'error', text: 'אירעה שגיאה בשליחת ההודעה.' });
             }
@@ -95,61 +100,11 @@ export default function Footer() {
 
     const ViewContent = (
         <footer className="w-full bg-[#f2665e] py-6 px-4 sm:px-8 text-white mt-auto">
-            <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 px-4 lg:px-8 items-start" dir="rtl">
+            <div className="max-w-screen-xl mx-auto flex flex-col md:grid md:grid-cols-2 gap-6 items-start" dir="rtl">
 
-                {/* עמודה ימנית - טופס */}
-                <div className="sendANote pr-0 md:pr-8">
-                    <h2 dir="rtl" className="text-lg font-semibold mb-2 text-right" style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}>
-                        {draft.noteTitle}
-                    </h2>
-                    <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder={draft.notePlaceholderName}
-                                value={contactForm.name}
-                                className="w-full h-8 bg-white/70 px-3 rounded text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm outline-none focus:bg-white"
-                                style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}
-                                onChange={(e) => handleContactFormChange("name", e.target.value)}
-                            />
-                        </div>
-                        <div className="relative">
-                            <input
-                                type="email"
-                                placeholder={draft.notePlaceholderEmail}
-                                value={contactForm.email}
-                                className="w-full h-8 bg-white/70 px-3 rounded text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm outline-none focus:bg-white"
-                                style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}
-                                onChange={(e) => handleContactFormChange("email", e.target.value)}
-                                aria-label="אימייל"
-                            />
-                        </div>
-                        <div className="relative">
-                            <textarea
-                                placeholder={draft.notePlaceholderMessage}
-                                value={contactForm.message}
-                                className="w-full h-16 bg-white/70 px-3 py-2 rounded resize-none text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm outline-none focus:bg-white"
-                                style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}
-                                onChange={(e) => handleContactFormChange("message", e.target.value)}
-                                aria-label="ההודעה שלי"
-                            />
-                        </div>
-                        {statusMsg && (
-                            <div className={`text-xs ${statusMsg.type === 'error' ? 'text-red-200' : 'text-green-200'}`}>
-                                {statusMsg.text}
-                            </div>
-                        )}
-                        <button
-                            type="submit"
-                            disabled={sending}
-                            className="bg-white text-[#f2665e] px-6 py-2 rounded hover:bg-gray-100 font-semibold transition-colors" style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}>
-                            {sending ? 'שולח...' : 'שלח'}
-                        </button>
-                    </form>
-                </div>
-
-                {/* עמודה שמאלית - פרטי קשר */}
-                <div className="flex flex-col items-center md:items-start">
+                {/* חלק פרטי קשר - מוצג תמיד */}
+                <div className="w-full flex flex-col items-center md:items-start text-center md:text-right order-1 md:order-2">
+                    {/* המפה מוסתרת במובייל ומוצגת רק ב-md ומעלה */}
                     <iframe
                         title="map"
                         src={`https://maps.google.com/maps?q=${encodeURIComponent(draft.contactAddress)}&output=embed&t=m`}
@@ -157,26 +112,27 @@ export default function Footer() {
                         style={{ border: 0 }}
                         allowFullScreen=""
                         loading="lazy"
-                        className="w-full max-w-[260px] mx-auto md:mx-0 mb-3 rounded shadow-md opacity-90 hover:opacity-100 transition-opacity"
+                        className="hidden md:block w-full max-w-[260px] mx-auto md:mx-0 mb-3 rounded shadow-md opacity-90"
                     ></iframe>
-                    <address className="font-normal text-sm [font-family:'Noto_Sans_Hebrew',Helvetica] tracking-[0] leading-[normal] [direction:rtl] not-italic mb-2 flex items-center justify-start">
+                    
+                    <address className="font-normal text-sm [font-family:'Noto_Sans_Hebrew',Helvetica] not-italic mb-2 flex items-center justify-center md:justify-start">
                         <FaMapMarkerAlt className="inline-block w-3 h-3 ml-2" />
                         {draft.contactAddress}
                     </address>
 
-                    <div className="[font-family:'Noto_Sans_Hebrew',Helvetica] font-normal text-sm tracking-[0] leading-[normal] [direction:rtl] mb-2 text-right">
-                        <span className="flex items-center justify-start mb-1">
+                    <div className="font-normal text-sm tracking-[0] leading-[normal] mb-2">
+                        <span className="flex items-center justify-center md:justify-start mb-1">
                             <FaClock className="inline-block w-3 h-3 ml-2" />
                             <span>{draft.contactInfo}</span>
                         </span>
                         
                         <div className="flex flex-col gap-1 mt-1">
-                            <a href={`tel:${formatPhoneForLink(draft.contactPhone)}`} className="hover:underline flex items-center justify-start" style={{ color: '#ffffff' }}>
+                            <a href={`tel:${formatPhoneForLink(draft.contactPhone)}`} className="hover:underline flex items-center justify-center md:justify-start">
                                 <FaPhoneAlt className="inline-block w-3 h-3 ml-2" />
                                 {draft.contactPhone}
                             </a>
 
-                            <a href={`mailto:${formatEmailForLink(draft.contactEmail)}`} className="hover:underline flex items-center justify-start" style={{ color: '#ffffff' }}>
+                            <a href={`mailto:${formatEmailForLink(draft.contactEmail)}`} className="hover:underline flex items-center justify-center md:justify-start">
                                 <FaEnvelope className="inline-block w-3 h-3 ml-2" />
                                 {draft.contactEmail}
                             </a>
@@ -184,11 +140,61 @@ export default function Footer() {
                     </div>
                 </div>
 
+                {/* חלק הטופס - במובייל נפתח מכפתור */}
+                <div className="sendANote w-full md:pr-8 order-2 md:order-1">
+                    {/* כפתור "דברו איתנו" - מוצג רק במובייל */}
+                    <button 
+                        onClick={() => setShowMobileForm(!showMobileForm)}
+                        className="md:hidden w-full bg-white text-[#f2665e] py-2 rounded-lg font-bold mb-4 shadow-sm"
+                    >
+                        {showMobileForm ? "סגור טופס" : "דברו איתנו"}
+                    </button>
+
+                    {/* הטופס עצמו - מוסתר במובייל אלא אם לחצו על הכפתור, מוצג תמיד ב-Desktop */}
+                    <div className={`${showMobileForm ? 'block' : 'hidden'} md:block transition-all duration-300`}>
+                        <h2 dir="rtl" className="text-lg font-semibold mb-2 text-right md:block hidden" style={{ fontFamily: 'Noto Sans Hebrew, sans-serif' }}>
+                            {draft.noteTitle}
+                        </h2>
+                        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+                            <input
+                                type="text"
+                                placeholder={draft.notePlaceholderName}
+                                value={contactForm.name}
+                                className="w-full h-8 bg-white/70 px-3 rounded text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm outline-none focus:bg-white"
+                                onChange={(e) => handleContactFormChange("name", e.target.value)}
+                            />
+                            <input
+                                type="email"
+                                placeholder={draft.notePlaceholderEmail}
+                                value={contactForm.email}
+                                className="w-full h-8 bg-white/70 px-3 rounded text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm outline-none focus:bg-white"
+                                onChange={(e) => handleContactFormChange("email", e.target.value)}
+                            />
+                            <textarea
+                                placeholder={draft.notePlaceholderMessage}
+                                value={contactForm.message}
+                                className="w-full h-16 bg-white/70 px-3 py-2 rounded resize-none text-[#f2665e] placeholder:text-[#f2665e]/70 text-right text-sm outline-none focus:bg-white"
+                                onChange={(e) => handleContactFormChange("message", e.target.value)}
+                            />
+                            {statusMsg && (
+                                <div className={`text-xs ${statusMsg.type === 'error' ? 'text-red-200' : 'text-green-200'}`}>
+                                    {statusMsg.text}
+                                </div>
+                            )}
+                            <button
+                                type="submit"
+                                disabled={sending}
+                                className="bg-white text-[#f2665e] px-6 py-2 rounded hover:bg-gray-100 font-semibold transition-colors">
+                                {sending ? 'שולח...' : 'שלח'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
-            <p className="w-full text-center font-normal text-xs [font-family:'Noto_Sans_Hebrew',Helvetica] tracking-[0] leading-[normal] mt-4 pt-3 border-t border-white/20 opacity-80">
+            <p className="w-full text-center font-normal text-xs tracking-[0] mt-4 pt-3 border-t border-white/20 opacity-80">
                 © {draft.creditNote}
             </p>
-
         </footer>
     );
 
