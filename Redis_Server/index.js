@@ -1,18 +1,22 @@
-import express from "express";
 import cors from "cors";
+import express from "express";
 import pageRoutes from "./routes/pageRoutes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(cookieParser());
+const PORT = process.env.PORT;
+const HOST_NAME = process.env.HOST_NAME;
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));
 app.use(express.json());
 
-app.use("/api/page",pageRoutes);
+app.use("/api/page", pageRoutes);
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () =>
+    console.log(`Server running on http://${HOST_NAME}:${PORT}`)
+);

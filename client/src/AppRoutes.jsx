@@ -1,16 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import AdminRoute from "./components/AdminRoute";
-import Layout from "./components/Layout";
-import HomePage from "./pages/HomePage";
-import BlogPage from "./pages/BlogPage"
-import Terms from "./components/Terms";
-import LoginPage from "./pages/LoginPage";
-import TipsPage from "./pages/TipsPage";
-import ProductsPage from "./pages/productsPage";
-import EditorPage from "./pages/EditorPage";
-import PhotoDevelopmentPage from "./pages/PhotoDevelopmentPage";
-import SignUpPage from "./pages/SignUpPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import AdminDashboardPage from "./adminPage/AdminDashboardPage";
 import EditPages from "./adminPage/EditPages";
 import OrdersManagement from "./adminPage/OrdersManagement";
@@ -18,12 +6,22 @@ import ProductsManagement from "./adminPage/ProductsManagement";
 import SendMailToClub from "./adminPage/SendMailToClub";
 import UpdateCatalog from "./adminPage/UpdateCatalog";
 import ViewMessages from "./adminPage/ViewMessages";
-import ShoppingCartPage from "./pages/ShoppingCartPage";
+import AdminRoute from "./components/AdminRoute";
+import Layout from "./components/Layout";
+import Terms from "./components/Terms";
+import BlogPage from "./pages/BlogPage";
+import EditorPage from "./pages/EditorPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import PhotoDevelopmentPage from "./pages/PhotoDevelopmentPage";
+import ProductsPage from "./pages/productsPage";
 import ProfilePage from "./pages/profilePage";
+import ShoppingCartPage from "./pages/ShoppingCartPage";
+import SignUpPage from "./pages/SignUpPage";
+import TipsPage from "./pages/TipsPage";
+import ProductSelectionPage from "./pages/ProductSelectionPage";
 
-// Wrapper to provide navigation prop to ProductsPage if needed, 
-// though ProductsPage could also use useNavigate directly.
-// For now, keeping onNavigate prop as requested in original code structure.
 const ProductsPageWrapper = () => {
     const navigate = useNavigate();
     return <ProductsPage onNavigate={(path) => navigate(path)} />;
@@ -48,6 +46,7 @@ export default function AppRoutes() {
                 <Route path="/terms" element={<Layout><Terms /></Layout>} />
                 <Route path="/tips" element={<Layout><TipsPage /></Layout>} />
                 <Route path="/profile" element={<Layout><ProfilePage /></Layout>} />
+                <Route path="/product-selection/:productId" element={<Layout><ProductSelectionPage /></Layout>} />
                 {/* Only admin can see this link */}
                 <Route path="/admindashboard" element={<AdminRoute><Layout><AdminDashboardPage /></Layout></AdminRoute>} />
                 <Route path="/editpages" element={<AdminRoute><Layout><EditPages /></Layout></AdminRoute>} />
@@ -58,7 +57,7 @@ export default function AppRoutes() {
                 <Route path="/viewmessages" element={<AdminRoute><Layout><ViewMessages /></Layout></AdminRoute>} />
                 <Route path="/cart" element={<Layout> <ShoppingCartPage /> </Layout>} />
                 <Route path="/products" element={<Layout> <ProductsPageWrapper /> </Layout>} />
-                <Route path="/editor" element={<Layout> <EditorPageWrapper /> </Layout>} />
+                <Route path="/editor/:productId" element={<Layout> <EditorPageWrapper /> </Layout>} />
                 <Route path="/photo-development" element={<Layout> <PhotoDevelopmentPage /> </Layout>} />
                 {/* Redirect to home */}
                 <Route path="*" element={<Navigate to="/" />} />
